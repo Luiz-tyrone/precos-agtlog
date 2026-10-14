@@ -3,123 +3,162 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AGT-LOG · Preços de combustível</title>
+<meta name="theme-color" content="#352344">
+<title>AGT-LOG · Controle de preços</title>
 <style>
-:root{--roxo:#381E42;--amar:#FFCE42;--bg:#F6F3F8;--surf:#fff;--tx:#241529;--mut:#6B5C73;--bd:#E2DBE7;--ok:#1E7A4A;--ok-bg:#E3F4EA;--pend-bg:#FFF3CC;--pend-tx:#7A5A00;--lin:#D99A00;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171019;--surf:#241829;--tx:#F3EDF5;--mut:#B3A4BB;--bd:#3C2D44;--ok:#6FD39C;--ok-bg:#183626;--pend-bg:#3F3210;--pend-tx:#FFD966}}
-:root[data-theme="dark"]{--bg:#171019;--surf:#241829;--tx:#F3EDF5;--mut:#B3A4BB;--bd:#3C2D44;--ok:#6FD39C;--ok-bg:#183626;--pend-bg:#3F3210;--pend-tx:#FFD966}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{
+  --purple:#352344;--purple-2:#452d57;--purple-soft:#f2edf5;--yellow:#ffcd50;
+  --bg:#f6f6f8;--surface:#ffffff;--surface-2:#fbfafc;--text:#211b25;--muted:#746d79;
+  --border:#e9e5ec;--border-strong:#ddd6e2;--green:#19734a;--green-bg:#eaf7f0;
+  --amber:#9a6a00;--amber-bg:#fff6dd;--red:#b33b32;--red-bg:#fff0ee;--line:#d99a00;
+  --shadow:0 10px 30px rgba(39,27,45,.06);--shadow-sm:0 3px 12px rgba(39,27,45,.05);
+  --radius:18px;--radius-sm:12px;
+  font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:light;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 "Barlow","Segoe UI",Roboto,Arial,sans-serif}
-header{background:var(--roxo);border-bottom:5px solid var(--amar);padding:8px 16px;display:flex;align-items:center;gap:14px}
-header img{height:42px;background:#fff;border-radius:6px;padding:3px 8px}
-header h1{margin:0;font-size:1.05rem;color:var(--amar);font-weight:600}
-header span{margin-left:auto;color:#fff;font-size:.85rem;opacity:.85}
-.app{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 62px)}
-aside{background:var(--surf);border-right:1px solid var(--bd);padding:14px 10px;display:flex;flex-direction:column;gap:4px}
-aside button{font:inherit;font-weight:600;text-align:left;background:none;color:var(--tx);border:0;border-left:5px solid transparent;border-radius:6px;padding:10px 12px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
-aside button[aria-current=true]{background:var(--bg);border-left-color:var(--amar)}
-aside button em{font-style:normal;font-size:.8rem;background:var(--pend-bg);color:var(--pend-tx);border-radius:99px;padding:0 8px}
-aside hr{border:0;border-top:1px solid var(--bd);width:100%;margin:8px 0}
-main{padding:18px;min-width:0}
-button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--amar);outline-offset:2px}
-.nota{font-size:.85rem;color:var(--mut);margin:0 0 14px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:16px}
-.kpi{background:var(--surf);border:1px solid var(--bd);border-left:6px solid var(--amar);border-radius:10px;padding:10px 14px}
-.kpi b{display:block;font-size:1.5rem;line-height:1.2}.kpi span{color:var(--mut);font-size:.85rem}
-.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-.bar input[type=search]{flex:1;min-width:200px}
-input,select{font:inherit;padding:8px 10px;border-radius:8px;border:2px solid var(--bd);background:var(--surf);color:var(--tx)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.chip{font:inherit;font-weight:600;font-size:.9rem;background:var(--surf);color:var(--tx);border:2px solid var(--bd);border-radius:99px;padding:3px 12px;cursor:pointer}
-.chip[aria-pressed=true]{background:var(--roxo);border-color:var(--roxo);color:var(--amar)}
-.chip small{opacity:.7;margin-left:4px}.chip i{font-style:normal;background:var(--amar);color:var(--roxo);border-radius:99px;padding:0 6px;margin-left:4px;font-size:.75rem}
-.scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:10px}
-table{width:100%;border-collapse:collapse;background:var(--surf);min-width:900px}
-th{background:var(--roxo);color:#fff;text-align:left;padding:8px 10px;font-weight:600;font-size:.88rem;position:sticky;top:0;z-index:1}
-td{padding:7px 10px;border-top:1px solid var(--bd)}
-.n{text-align:right;font-variant-numeric:tabular-nums}
-tr.g td{background:var(--bg);padding:0}
-tr.g button{font:inherit;font-weight:700;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:7px 10px;cursor:pointer}
-tr.g button span{color:var(--mut);font-weight:500;margin-left:8px}
-.old{color:var(--mut);font-style:italic}
-.min{background:var(--ok-bg);color:var(--ok);font-weight:700;border-radius:6px;padding:1px 7px}
-.pill{font-size:.78rem;font-weight:600;border-radius:99px;padding:2px 9px;white-space:nowrap}
-.pill.pend{background:var(--pend-bg);color:var(--pend-tx)}.pill.ok{background:var(--ok-bg);color:var(--ok)}
-.btn{font:inherit;font-weight:700;background:var(--amar);color:var(--roxo);border:2px solid var(--roxo);border-radius:8px;padding:8px 16px;cursor:pointer;text-decoration:none;display:inline-block}
-.btn.sm{padding:2px 9px;font-size:.8rem}
-.av{color:#B3261E;font-size:.8rem}
-.card{background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:16px}
-.filtros{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:8px}
-.filtros label,.fl{display:block;font-weight:600;font-size:.88rem;margin-bottom:3px}.filtros select,.filtros input{width:100%}
-.erro{color:#B3261E;font-size:.9rem;min-height:1.2em;margin:4px 0}
-.resumo{display:flex;gap:18px;flex-wrap:wrap;margin:0 0 8px}.resumo span{color:var(--mut)}.resumo b{color:var(--tx)}
-.rolar{max-height:300px;overflow:auto;margin-bottom:12px}.rolar table{min-width:380px}
-svg text{fill:var(--mut);font-size:11px}
-.un{border-top:1px solid var(--bd);padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center}
-.un .in{display:flex;gap:6px;flex-wrap:wrap}
-.un .in label{font-size:.75rem;color:var(--mut);display:block}.un .in input{width:92px;font-weight:700;padding:6px 8px}
-.sucesso{text-align:center;padding:16px 0}.sucesso .v{width:60px;height:60px;border-radius:50%;background:var(--amar);color:var(--roxo);font-size:1.9rem;font-weight:800;display:grid;place-items:center;margin:0 auto 10px}
+html{background:var(--bg);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid rgba(255,205,80,.65);outline-offset:2px}
 [hidden]{display:none!important}
-@media(max-width:800px){.app{grid-template-columns:1fr}aside{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd);padding:6px}aside hr{display:none}aside button{border-left:0;border-bottom:4px solid transparent;white-space:nowrap}aside button[aria-current=true]{border-bottom-color:var(--amar)}main{padding:12px}.un{grid-template-columns:1fr}}
 
-dialog{border:1px solid var(--bd);border-radius:12px;background:var(--surf);color:var(--tx);max-width:460px;width:92%;padding:18px}dialog::backdrop{background:#0008}textarea{font:inherit;width:100%;padding:8px;border-radius:8px;border:2px solid var(--bd);background:var(--bg);color:var(--tx)}.ck{display:flex;gap:8px;align-items:center;margin:6px 0}
-.rg td{background:var(--bg);padding:8px 10px;border-top:2px solid var(--bd)}.rg .rw{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.rg .rw b{flex:1;min-width:200px}
+/* Topo */
+.topbar{height:76px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;position:sticky;top:0;z-index:30}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}.brand img{width:118px;height:48px;object-fit:contain}.brand-copy{display:flex;flex-direction:column;min-width:0}.brand-copy strong{font-size:15px;color:var(--purple);letter-spacing:.01em}.brand-copy span{font-size:12px;color:var(--muted)}
+.userbox{margin-left:auto;display:flex;align-items:center;gap:10px;background:var(--purple-soft);padding:8px 12px;border-radius:999px;color:var(--purple);max-width:340px}.user-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(25,115,74,.09)}#usr{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Login */
+.login-shell{min-height:calc(100vh - 76px);display:grid;place-items:center;padding:28px}.login-card{width:min(420px,100%);background:var(--surface);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);padding:28px}.login-badge{display:inline-flex;align-items:center;gap:7px;background:var(--purple-soft);color:var(--purple);padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-bottom:16px}.login-card h2{font-size:26px;line-height:1.15;margin:0 0 7px}.login-card>p{margin:0 0 24px;color:var(--muted)}
+
+/* Layout */
+.app{display:grid;grid-template-columns:238px minmax(0,1fr);min-height:calc(100vh - 76px)}
+aside{background:var(--surface);border-right:1px solid var(--border);padding:20px 14px;position:sticky;top:76px;height:calc(100vh - 76px);display:flex;flex-direction:column;gap:7px}
+.menu-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#9b929f;font-weight:800;padding:5px 12px 7px}
+aside button{border:0;background:transparent;color:#554d5a;border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;text-align:left;font-weight:650;transition:.15s ease}
+aside button:hover{background:#f7f4f8;color:var(--purple)}aside button[aria-current=true]{background:var(--purple);color:#fff;box-shadow:0 7px 18px rgba(53,35,68,.15)}
+.nav-icon{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:#f1edf3;color:var(--purple);font-size:14px;font-weight:800;flex:0 0 auto}aside button[aria-current=true] .nav-icon{background:rgba(255,255,255,.13);color:var(--yellow)}
+aside button em{margin-left:auto;font-style:normal;font-size:11px;background:var(--amber-bg);color:var(--amber);border-radius:999px;padding:2px 7px;min-width:22px;text-align:center}aside hr{border:0;border-top:1px solid var(--border);width:100%;margin:9px 0}.logout{margin-top:auto!important;color:var(--muted)!important}.logout:hover{color:var(--red)!important;background:var(--red-bg)!important}
+main{padding:28px 30px 44px;min-width:0;max-width:1680px;width:100%;margin:0 auto}
+.section-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin:0 0 20px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--purple);font-weight:800;margin-bottom:6px}.section-head h1{font-size:28px;letter-spacing:-.025em;line-height:1.1;margin:0}.section-head p{color:var(--muted);margin:7px 0 0;max-width:650px}.date-chip{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:12px;white-space:nowrap;box-shadow:var(--shadow-sm)}
+
+/* Inputs / botões */
+input,select,textarea{border:1px solid var(--border-strong);background:var(--surface);color:var(--text);border-radius:11px;padding:10px 12px;transition:.15s ease}input:hover,select:hover,textarea:hover{border-color:#cfc5d5}input:focus,select:focus,textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(53,35,68,.08);outline:none}
+.fl,.filtros label{display:block;font-size:12px;font-weight:700;color:#5c5461;margin:0 0 5px}
+.btn{border:0;background:var(--purple);color:#fff;border-radius:11px;padding:10px 15px;font-weight:750;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 5px 13px rgba(53,35,68,.12);transition:.15s ease}.btn:hover{transform:translateY(-1px);background:var(--purple-2)}.btn:active{transform:none}.btn.sm{padding:6px 10px;font-size:12px;border-radius:9px;box-shadow:none}.btn.secondary{background:#fff;color:var(--purple);border:1px solid var(--border);box-shadow:none}.btn.secondary:hover{background:var(--purple-soft)}
+
+/* Cards / KPIs */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));gap:12px;margin-bottom:18px}.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:17px 18px;min-height:112px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}.kpi:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--yellow)}.kpi b{display:block;font-size:24px;line-height:1.15;margin:8px 0 4px;letter-spacing:-.02em;color:var(--text)}.kpi b small{font-size:14px;color:var(--muted);font-weight:600}.kpi span{display:block;color:var(--muted);font-size:12px}.kpi .kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8d8491;font-weight:800}.kpi-progress:before{background:var(--green)}.kpi-wait:before{background:var(--yellow)}.kpi-price:before{background:var(--purple)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
+
+/* Ferramentas */
+.toolbar-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow-sm)}.bar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:0}.bar input[type=search]{flex:1;min-width:250px}.bar .check-filter{display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);font-weight:650;color:#5e5662;white-space:nowrap}.bar input[type=checkbox],.ck input[type=checkbox]{accent-color:var(--purple)}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 15px}.chip{border:1px solid var(--border);background:var(--surface);color:#615867;border-radius:999px;padding:6px 11px;font-weight:700;font-size:12px;cursor:pointer;transition:.15s}.chip:hover{border-color:#cfc4d4;background:#faf8fb}.chip[aria-pressed=true]{background:var(--purple);border-color:var(--purple);color:#fff}.chip small{opacity:.75;margin-left:4px}.chip i{font-style:normal;background:var(--yellow);color:var(--purple);border-radius:99px;padding:1px 5px;margin-left:5px;font-size:10px}
+
+/* Tabelas */
+.scroll{overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm)}table{width:100%;border-collapse:separate;border-spacing:0;background:transparent;min-width:980px}th{background:#faf9fb;color:#756d7a;text-align:left;padding:11px 12px;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border)}td{padding:10px 12px;border-top:1px solid #f0edf2;vertical-align:middle}tbody tr:not(.g):not(.rg):hover td{background:#fcfbfd}.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:650}.old{color:#9a929d;font-style:normal}.min{display:inline-flex;background:var(--green-bg);color:var(--green);font-weight:800;border-radius:8px;padding:3px 7px}.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:750;border-radius:999px;padding:4px 8px;white-space:nowrap}.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.pill.pend{background:var(--amber-bg);color:var(--amber)}.pill.ok{background:var(--green-bg);color:var(--green)}.av{color:var(--red);font-size:12px}tr.g td{background:#f8f6fa;padding:0;border-top:1px solid var(--border)}tr.g button{width:100%;text-align:left;border:0;background:transparent;color:var(--purple);padding:11px 13px;font-weight:800;cursor:pointer}tr.g button span{color:var(--muted);font-weight:550;margin-left:8px;font-size:12px}.rg td{background:#f7f4f9!important;padding:11px 12px;border-top:1px solid var(--border)}.rg .rw{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.rg .rw b{flex:1;min-width:220px;color:var(--purple)}
+
+/* Histórico / cadastro */
+.filtros{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:11px;margin-bottom:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-sm)}.filtros select,.filtros input{width:100%}.erro{color:var(--red);font-size:12px;min-height:1.2em;margin:7px 0}.nota{font-size:12px;color:var(--muted);margin:0 0 12px}.resumo{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:10px;margin:14px 0}.resumo span{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;color:var(--muted);box-shadow:var(--shadow-sm)}.resumo b{display:block;color:var(--text);font-size:18px;margin-top:3px}.rolar{max-height:330px;overflow:auto;margin-bottom:14px}.rolar table{min-width:430px}svg text{fill:var(--muted);font-size:11px}
+
+/* Dialogs */
+dialog{border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);max-width:490px;width:calc(100% - 30px);padding:22px;box-shadow:0 25px 70px rgba(0,0,0,.18)}dialog::backdrop{background:rgba(31,23,34,.5);backdrop-filter:blur(2px)}dialog h3{color:var(--purple);font-size:20px}textarea{width:100%}.ck{display:flex;gap:8px;align-items:center;margin:8px 0;color:#59515e}
+
+/* Footer */
+.page-foot{color:#a098a4;font-size:11px;text-align:center;padding:18px 4px 2px}
+
+@media(max-width:1180px){.kpis{grid-template-columns:repeat(3,1fr)}.filtros{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){.topbar{height:66px;padding:0 14px}.brand img{width:96px;height:39px}.brand-copy span{display:none}.userbox{max-width:150px}.app{grid-template-columns:1fr}.app aside{position:sticky;top:66px;height:auto;z-index:25;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--border);padding:7px;background:rgba(255,255,255,.96);backdrop-filter:blur(8px)}.menu-title,aside hr,.logout .nav-label{display:none}.logout{margin-top:0!important;margin-left:auto!important}aside button{padding:8px 10px;white-space:nowrap}.nav-icon{width:25px;height:25px}.app main{padding:18px 13px 32px}.section-head{align-items:flex-start}.date-chip{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.filtros{grid-template-columns:1fr}.bar input[type=search]{min-width:100%;width:100%}.scroll{border-radius:14px}}
+@media(max-width:500px){.brand-copy strong{font-size:13px}.userbox{display:none}.section-head h1{font-size:24px}.section-head p{font-size:13px}.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:14px;min-height:102px}.kpi b{font-size:21px}.kpi-price{grid-column:auto}.chips{overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}.chip{flex:0 0 auto}.toolbar-card{padding:11px}.btn{width:100%}.bar .btn.sm{width:auto}.resumo{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header><img src="logo.png" alt="AGT-LOG Logística e Cargas"><h1>Preços de combustível</h1><span id="usr"></span></header>
-<div class="card" id="login" style="max-width:380px;margin:40px auto">
- <h2 style="margin-top:0">Entrar</h2>
- <label class="fl" for="em">E-mail</label><input id="em" type="email" autocomplete="username" style="width:100%">
- <label class="fl" for="pw" style="margin-top:10px">Senha</label><input id="pw" type="password" autocomplete="current-password" style="width:100%">
- <p class="erro" id="lErr" role="alert"></p><button class="btn" id="go" style="width:100%">Entrar</button>
-</div>
-<div class="app" id="app" hidden>
-<aside aria-label="Menu">
- <button data-v="hoje" aria-current="true">Hoje <em id="nPend"></em></button>
- <button data-v="hist">Histórico</button>
- <button data-v="cad">Postos</button>
- <hr><button id="sair">Sair</button>
-</aside>
-<main>
-<section id="v-hoje">
- <div class="kpis" id="kpis"></div>
- <div class="bar">
-  <input type="search" id="q" placeholder="Buscar posto, cidade ou responsável" aria-label="Buscar">
-  <select id="ord" aria-label="Ordenar"><option value="uf">Agrupar por estado</option><option value="s10">Menor S-10</option><option value="s500">Menor S-500</option><option value="arla">Menor Arla</option><option value="ult">Mais tempo sem atualizar</option></select>
-  <label><input type="checkbox" id="pend"> Só aguardando</label>
-  <button class="btn sm" id="expAll">Expandir tudo</button><button class="btn sm" id="colAll">Recolher tudo</button>
- </div>
- <div class="chips" id="chips"></div>
- <div class="scroll"><table id="tbl"></table></div>
-</section>
-<section id="v-hist" hidden>
- <div class="filtros">
-  <div><label for="hP">Posto</label><select id="hP"></select></div>
-  <div><label for="hC">Combustível</label><select id="hC"><option value="s10">Diesel S-10</option><option value="s500">Diesel S-500</option><option value="arla">Arla</option></select></div>
-  <div><label for="hI">Data inicial</label><input type="date" id="hI"></div>
-  <div><label for="hF">Data final</label><input type="date" id="hF"></div>
- </div>
- <p class="erro" id="hErr" role="alert"></p><div id="hRes"></div>
-</section>
-<section id="v-cad" hidden>
- <div class="bar"><input type="search" id="qc" placeholder="Buscar posto, cidade ou responsável" aria-label="Buscar no cadastro"><label><input type="checkbox" id="inat"> Mostrar inativos</label><button class="btn" id="novoR">+ Novo responsável</button></div>
- <p class="nota" id="cadN"></p>
- <div class="scroll"><table id="tcad"></table></div>
-</section>
-</main></div>
 
-<dialog id="dlg2"><h3 style="margin-top:0" id="d2T"></h3><div id="d2B"></div><p class="erro" id="d2E" role="alert"></p><div class="bar" style="margin:12px 0 0"><button class="btn" id="d2Ok">Salvar</button><button class="btn sm" id="d2No">Cancelar</button></div></dialog>
+<header class="topbar">
+  <div class="brand">
+    <img src="logo.png" alt="AGT-LOG Logística e Cargas">
+    <div class="brand-copy"><strong>Controle de preços</strong><span>Combustíveis · gestão operacional</span></div>
+  </div>
+  <div class="userbox"><span class="user-dot"></span><span id="usr"></span></div>
+</header>
+
+<div class="login-shell" id="login">
+  <div class="login-card">
+    <span class="login-badge">ÁREA INTERNA AGT-LOG</span>
+    <h2>Acessar painel</h2>
+    <p>Entre com sua conta para acompanhar e administrar os preços dos postos.</p>
+    <label class="fl" for="em">E-mail</label>
+    <input id="em" type="email" autocomplete="username" style="width:100%" placeholder="seuemail@empresa.com.br">
+    <label class="fl" for="pw" style="margin-top:13px">Senha</label>
+    <input id="pw" type="password" autocomplete="current-password" style="width:100%" placeholder="••••••••">
+    <p class="erro" id="lErr" role="alert"></p>
+    <button class="btn" id="go" style="width:100%;margin-top:4px">Entrar</button>
+  </div>
+</div>
+
+<div class="app" id="app" hidden>
+  <aside aria-label="Menu principal">
+    <div class="menu-title">Navegação</div>
+    <button data-v="hoje" aria-current="true"><span class="nav-icon">▦</span><span class="nav-label">Painel</span><em id="nPend"></em></button>
+    <button data-v="hist"><span class="nav-icon">↗</span><span class="nav-label">Histórico</span></button>
+    <button data-v="cad"><span class="nav-icon">⌂</span><span class="nav-label">Postos</span></button>
+    <hr>
+    <button id="sair" class="logout"><span class="nav-icon">↪</span><span class="nav-label">Sair</span></button>
+  </aside>
+
+  <main>
+    <section id="v-hoje">
+      <div class="section-head">
+        <div><div class="eyebrow">Visão do dia</div><h1>Painel de preços</h1><p>Acompanhe quem já atualizou os valores, identifique pendências e compare rapidamente os menores preços.</p></div>
+        <span class="date-chip">Atualização diária</span>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="toolbar-card">
+        <div class="bar">
+          <input type="search" id="q" placeholder="Buscar posto, cidade ou responsável..." aria-label="Buscar">
+          <select id="ord" aria-label="Ordenar"><option value="uf">Agrupar por estado</option><option value="s10">Menor S-10</option><option value="s500">Menor S-500</option><option value="arla">Menor Arla</option><option value="ult">Mais tempo sem atualizar</option></select>
+          <label class="check-filter"><input type="checkbox" id="pend"> Só aguardando</label>
+          <button class="btn sm secondary" id="expAll">Expandir tudo</button><button class="btn sm secondary" id="colAll">Recolher tudo</button>
+        </div>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="scroll"><table id="tbl"></table></div>
+    </section>
+
+    <section id="v-hist" hidden>
+      <div class="section-head"><div><div class="eyebrow">Análise</div><h1>Histórico de preços</h1><p>Consulte a evolução por posto e combustível em um período específico.</p></div></div>
+      <div class="filtros">
+        <div><label for="hP">Posto</label><select id="hP"></select></div>
+        <div><label for="hC">Combustível</label><select id="hC"><option value="s10">Diesel S-10</option><option value="s500">Diesel S-500</option><option value="arla">Arla</option></select></div>
+        <div><label for="hI">Data inicial</label><input type="date" id="hI"></div>
+        <div><label for="hF">Data final</label><input type="date" id="hF"></div>
+      </div>
+      <p class="erro" id="hErr" role="alert"></p><div id="hRes"></div>
+    </section>
+
+    <section id="v-cad" hidden>
+      <div class="section-head"><div><div class="eyebrow">Cadastros</div><h1>Postos e responsáveis</h1><p>Gerencie os responsáveis, links exclusivos, unidades e configurações de cada tela de atualização.</p></div></div>
+      <div class="toolbar-card"><div class="bar">
+        <input type="search" id="qc" placeholder="Buscar posto, cidade ou responsável..." aria-label="Buscar no cadastro">
+        <label class="check-filter"><input type="checkbox" id="inat"> Mostrar inativos</label>
+        <button class="btn" id="novoR">+ Novo responsável</button>
+      </div></div>
+      <p class="nota" id="cadN"></p>
+      <div class="scroll"><table id="tcad"></table></div>
+    </section>
+
+    <div class="page-foot">AGT-LOG · Controle interno de preços de combustível</div>
+  </main>
+</div>
+
+<dialog id="dlg2"><h3 style="margin-top:0" id="d2T"></h3><div id="d2B"></div><p class="erro" id="d2E" role="alert"></p><div class="bar" style="margin:14px 0 0"><button class="btn" id="d2Ok">Salvar</button><button class="btn sm secondary" id="d2No">Cancelar</button></div></dialog>
 <dialog id="dlg">
- <h3 style="margin-top:0" id="dT"></h3>
- <p class="fl">Combustíveis que este posto informa</p>
- <div id="dP"></div>
- <label class="ck"><input type="checkbox" id="dObs"> Mostrar campo de observação</label>
- <label class="fl" for="dEx" style="margin-top:10px">Campos extras (um por linha, ex.: Preço à vista)</label>
- <textarea id="dEx" rows="3"></textarea>
- <div class="bar" style="margin:12px 0 0"><button class="btn" id="dOk">Salvar</button><button class="btn sm" id="dNo">Cancelar</button></div>
+  <h3 style="margin-top:0" id="dT"></h3>
+  <p class="fl">Combustíveis que este posto informa</p>
+  <div id="dP"></div>
+  <label class="ck"><input type="checkbox" id="dObs"> Mostrar campo de observação</label>
+  <label class="fl" for="dEx" style="margin-top:12px">Campos extras (um por linha, ex.: Preço à vista)</label>
+  <textarea id="dEx" rows="3"></textarea>
+  <div class="bar" style="margin:14px 0 0"><button class="btn" id="dOk">Salvar</button><button class="btn sm secondary" id="dNo">Cancelar</button></div>
 </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -153,8 +192,8 @@ async function carregar(){
 const val=(d,k)=>d.u[k]?Number(d.u[k].valor):null,vende=(d,k)=>(d.produtos||[]).includes(k);
 
 /* HOJE */
-function kpis(){const ok=D.filter(d=>!d.pend),m=k=>{const a=ok.filter(d=>val(d,k)!=null);if(!a.length)return `<b>—</b><span>Menor ${NM[k]}: sem dados hoje</span>`;const x=a.reduce((p,c)=>val(c,k)<val(p,k)?c:p);return `<b>R$ ${f(val(x,k))}</b><span>Menor ${NM[k]} · ${esc(x.nome)} (${esc(x.cidade)}-${x.uf||""})</span>`};
- $("kpis").innerHTML=`<div class="kpi"><b>${ok.length} de ${D.length}</b><span>postos responderam hoje</span></div>`+PR.map(k=>`<div class="kpi">${m(k)}</div>`).join("")}
+function kpis(){const ok=D.filter(d=>!d.pend),pend=D.length-ok.length,m=k=>{const a=ok.filter(d=>val(d,k)!=null);if(!a.length)return `<b>—</b><span>Menor ${NM[k]}: sem dados hoje</span>`;const x=a.reduce((p,c)=>val(c,k)<val(p,k)?c:p);return `<b>R$ ${f(val(x,k))}</b><span>Menor ${NM[k]} · ${esc(x.nome)} · ${esc(x.cidade)}${x.uf?"/"+x.uf:""}</span>`};
+ $("kpis").innerHTML=`<div class="kpi kpi-progress"><span class="kpi-label">Atualizados hoje</span><b>${ok.length}<small> / ${D.length}</small></b><span>${D.length?Math.round(ok.length/D.length*100):0}% das unidades responderam</span></div><div class="kpi kpi-wait"><span class="kpi-label">Aguardando</span><b>${pend}</b><span>${pend===1?"unidade ainda não respondeu":"unidades ainda não responderam"}</span></div>`+PR.map(k=>`<div class="kpi kpi-price">${m(k)}</div>`).join("")}
 function chips(){$("chips").innerHTML=`<button class="chip" data-u="" aria-pressed="${uf===""}">Todos<small>${D.length}</small></button>`+UF.map(u=>{const a=D.filter(d=>(d.uf||"—")===u),p=a.filter(d=>d.pend).length;return `<button class="chip" data-u="${u}" aria-pressed="${uf===u}">${u}<small>${a.length}</small>${p?`<i title="${p} aguardando">${p}</i>`:""}</button>`}).join("");
  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{uf=b.dataset.u;chips();tabela()})}
 const cel=(d,k,mn)=>{if(!vende(d,k)||val(d,k)==null)return "—";const v=val(d,k);return d.pend?`<span class="old" title="Preço do último envio">${f(v)}</span>`:(k==="s10"&&v===mn?`<span class="min" title="Menor S-10 do estado">${f(v)}</span>`:f(v))};
@@ -240,5 +279,6 @@ $("dOk").onclick=async()=>{const pr=[...$("dP").querySelectorAll("input:checked"
  const {error}=await sb.from("postos").update({produtos:pr,config_tela:cfg}).eq("id",cur.id);if(error){alert("Erro ao salvar: "+error.message);return}
  $("dlg").close();await carregar()};
 </script>
+
 </body>
 </html>

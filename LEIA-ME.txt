@@ -1,0 +1,30 @@
+AGT-LOG · CONTROLE DE PREÇOS · REDESIGN VISUAL
+
+Arquivos para publicar:
+- index.html  -> painel interno da gestão
+- posto.html  -> tela usada pelos responsáveis dos postos
+- config.js   -> mantido sem alteração
+- logo.png    -> mantida
+
+Backups incluídos:
+- index_original.html
+- posto_original.html
+
+IMPORTANTE
+A lógica de banco/Supabase, autenticação, tokens, RPCs carregar_tela/enviar_precos, cadastro, histórico e links exclusivos foi preservada.
+As alterações foram concentradas em layout, CSS e apresentação dos mesmos dados.
+
+Principais mudanças visuais:
+- painel mais clean, claro e corporativo
+- menu lateral organizado e responsivo
+- KPIs com leitura rápida, incluindo aguardando
+- filtros dentro de card próprio
+- tabelas mais leves
+- histórico com filtros e cards mais organizados
+- cadastro com agrupamento visual de responsáveis
+- tela do posto redesenhada para celular
+- último preço exibido explicitamente abaixo do campo
+- campos de preço maiores
+- botão de envio fixo/sticky na parte inferior da tela
+
+Para atualizar um site existente, faça backup do diretório atual e substitua apenas index.html e posto.html.

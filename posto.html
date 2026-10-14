@@ -4,74 +4,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#352344">
 <title>AGT-LOG · Informar preços</title>
 <style>
-:root{--roxo:#381E42;--amar:#FFCE42;--bg:#F6F3F8;--surf:#fff;--tx:#241529;--mut:#6B5C73;--bd:#E2DBE7;--ok:#1E7A4A;--ok-bg:#E3F4EA;--pend-bg:#FFF3CC;--pend-tx:#7A5A00;--lin:#D99A00;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171019;--surf:#241829;--tx:#F3EDF5;--mut:#B3A4BB;--bd:#3C2D44;--ok:#6FD39C;--ok-bg:#183626;--pend-bg:#3F3210;--pend-tx:#FFD966}}
-:root[data-theme="dark"]{--bg:#171019;--surf:#241829;--tx:#F3EDF5;--mut:#B3A4BB;--bd:#3C2D44;--ok:#6FD39C;--ok-bg:#183626;--pend-bg:#3F3210;--pend-tx:#FFD966}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 "Barlow","Segoe UI",Roboto,Arial,sans-serif}
-header{background:var(--roxo);border-bottom:5px solid var(--amar);padding:8px 16px;display:flex;align-items:center;gap:14px}
-header img{height:42px;background:#fff;border-radius:6px;padding:3px 8px}
-header h1{margin:0;font-size:1.05rem;color:var(--amar);font-weight:600}
-header span{margin-left:auto;color:#fff;font-size:.85rem;opacity:.85}
-.app{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 62px)}
-aside{background:var(--surf);border-right:1px solid var(--bd);padding:14px 10px;display:flex;flex-direction:column;gap:4px}
-aside button{font:inherit;font-weight:600;text-align:left;background:none;color:var(--tx);border:0;border-left:5px solid transparent;border-radius:6px;padding:10px 12px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
-aside button[aria-current=true]{background:var(--bg);border-left-color:var(--amar)}
-aside button em{font-style:normal;font-size:.8rem;background:var(--pend-bg);color:var(--pend-tx);border-radius:99px;padding:0 8px}
-aside hr{border:0;border-top:1px solid var(--bd);width:100%;margin:8px 0}
-main{padding:18px;min-width:0}
-button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--amar);outline-offset:2px}
-.nota{font-size:.85rem;color:var(--mut);margin:0 0 14px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:16px}
-.kpi{background:var(--surf);border:1px solid var(--bd);border-left:6px solid var(--amar);border-radius:10px;padding:10px 14px}
-.kpi b{display:block;font-size:1.5rem;line-height:1.2}.kpi span{color:var(--mut);font-size:.85rem}
-.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-.bar input[type=search]{flex:1;min-width:200px}
-input,select{font:inherit;padding:8px 10px;border-radius:8px;border:2px solid var(--bd);background:var(--surf);color:var(--tx)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.chip{font:inherit;font-weight:600;font-size:.9rem;background:var(--surf);color:var(--tx);border:2px solid var(--bd);border-radius:99px;padding:3px 12px;cursor:pointer}
-.chip[aria-pressed=true]{background:var(--roxo);border-color:var(--roxo);color:var(--amar)}
-.chip small{opacity:.7;margin-left:4px}.chip i{font-style:normal;background:var(--amar);color:var(--roxo);border-radius:99px;padding:0 6px;margin-left:4px;font-size:.75rem}
-.scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:10px}
-table{width:100%;border-collapse:collapse;background:var(--surf);min-width:900px}
-th{background:var(--roxo);color:#fff;text-align:left;padding:8px 10px;font-weight:600;font-size:.88rem;position:sticky;top:0;z-index:1}
-td{padding:7px 10px;border-top:1px solid var(--bd)}
-.n{text-align:right;font-variant-numeric:tabular-nums}
-tr.g td{background:var(--bg);padding:0}
-tr.g button{font:inherit;font-weight:700;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:7px 10px;cursor:pointer}
-tr.g button span{color:var(--mut);font-weight:500;margin-left:8px}
-.old{color:var(--mut);font-style:italic}
-.min{background:var(--ok-bg);color:var(--ok);font-weight:700;border-radius:6px;padding:1px 7px}
-.pill{font-size:.78rem;font-weight:600;border-radius:99px;padding:2px 9px;white-space:nowrap}
-.pill.pend{background:var(--pend-bg);color:var(--pend-tx)}.pill.ok{background:var(--ok-bg);color:var(--ok)}
-.btn{font:inherit;font-weight:700;background:var(--amar);color:var(--roxo);border:2px solid var(--roxo);border-radius:8px;padding:8px 16px;cursor:pointer;text-decoration:none;display:inline-block}
-.btn.sm{padding:2px 9px;font-size:.8rem}
-.av{color:#B3261E;font-size:.8rem}
-.card{background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:16px}
-.filtros{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:8px}
-.filtros label,.fl{display:block;font-weight:600;font-size:.88rem;margin-bottom:3px}.filtros select,.filtros input{width:100%}
-.erro{color:#B3261E;font-size:.9rem;min-height:1.2em;margin:4px 0}
-.resumo{display:flex;gap:18px;flex-wrap:wrap;margin:0 0 8px}.resumo span{color:var(--mut)}.resumo b{color:var(--tx)}
-.rolar{max-height:300px;overflow:auto;margin-bottom:12px}.rolar table{min-width:380px}
-svg text{fill:var(--mut);font-size:11px}
-.un{border-top:1px solid var(--bd);padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center}
-.un .in{display:flex;gap:6px;flex-wrap:wrap}
-.un .in label{font-size:.75rem;color:var(--mut);display:block}.un .in input{width:92px;font-weight:700;padding:6px 8px}
-.sucesso{text-align:center;padding:16px 0}.sucesso .v{width:60px;height:60px;border-radius:50%;background:var(--amar);color:var(--roxo);font-size:1.9rem;font-weight:800;display:grid;place-items:center;margin:0 auto 10px}
-[hidden]{display:none!important}
-@media(max-width:800px){.app{grid-template-columns:1fr}aside{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd);padding:6px}aside hr{display:none}aside button{border-left:0;border-bottom:4px solid transparent;white-space:nowrap}aside button[aria-current=true]{border-bottom-color:var(--amar)}main{padding:12px}.un{grid-template-columns:1fr}}
-
-dialog{border:1px solid var(--bd);border-radius:12px;background:var(--surf);color:var(--tx);max-width:460px;width:92%;padding:18px}dialog::backdrop{background:#0008}textarea{font:inherit;width:100%;padding:8px;border-radius:8px;border:2px solid var(--bd);background:var(--bg);color:var(--tx)}.ck{display:flex;gap:8px;align-items:center;margin:6px 0}
- main{max-width:760px;margin:0 auto}</style>
+:root{--purple:#352344;--purple-2:#452d57;--purple-soft:#f2edf5;--yellow:#ffcd50;--bg:#f5f5f7;--surface:#fff;--surface-2:#faf9fb;--text:#211b25;--muted:#746d79;--border:#e8e4eb;--border-strong:#d9d2de;--green:#19734a;--green-bg:#eaf7f0;--red:#b33b32;--shadow:0 12px 34px rgba(39,27,45,.07);--radius:20px;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:light}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Inter,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh;padding-bottom:env(safe-area-inset-bottom,0)}
+button,input,textarea{font:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(255,205,80,.7);outline-offset:2px}
+.site-head{background:var(--surface);border-bottom:1px solid var(--border);padding:12px max(18px,env(safe-area-inset-left));position:sticky;top:0;z-index:20}.site-head-inner{max-width:850px;margin:0 auto;display:flex;align-items:center;gap:13px}.site-head img{width:106px;height:44px;object-fit:contain}.site-head-copy{border-left:1px solid var(--border);padding-left:13px}.site-head-copy strong{display:block;color:var(--purple);font-size:14px}.site-head-copy span{font-size:11px;color:var(--muted)}
+main{max-width:850px;margin:0 auto;padding:24px 16px 110px}.card{background:transparent}.welcome{background:linear-gradient(135deg,var(--purple),#49345a);border-radius:22px;padding:23px;color:#fff;box-shadow:var(--shadow);margin-bottom:14px;position:relative;overflow:hidden}.welcome:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:rgba(255,205,80,.1);right:-55px;top:-75px}.welcome .eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--yellow);font-weight:800}.welcome h2{font-size:25px;line-height:1.12;margin:5px 0 8px}.welcome p{margin:0;color:rgba(255,255,255,.77);max-width:630px;font-size:13px}
+.info-note{display:flex;gap:10px;align-items:flex-start;background:#fff9e9;border:1px solid #f7e6ad;border-radius:14px;padding:11px 13px;color:#6f5c22;font-size:12px;margin-bottom:14px}.info-note b{color:#5e4a11}.info-icon{width:24px;height:24px;display:grid;place-items:center;border-radius:8px;background:var(--yellow);color:var(--purple);font-weight:900;flex:0 0 auto}
+.units{display:grid;gap:12px}.station-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:0 5px 18px rgba(39,27,45,.045)}.station-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:1px solid #f0edf2;padding-bottom:13px;margin-bottom:14px}.station-name{font-size:17px;font-weight:800;color:var(--purple);line-height:1.25}.station-place{font-size:12px;color:var(--muted);margin-top:3px}.station-chip{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:var(--purple-soft);color:var(--purple);border-radius:999px;padding:5px 8px;white-space:nowrap}
+.price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.price-field{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:10px}.price-field label{display:block;font-size:11px;color:#5e5662;font-weight:800;margin-bottom:5px}.price-input{display:flex;align-items:center;gap:6px}.price-input span{font-weight:800;color:var(--purple);font-size:13px}.price-field input{width:100%;min-width:0;border:1px solid var(--border-strong);background:#fff;color:var(--text);border-radius:10px;padding:11px 10px;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}.price-field input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(53,35,68,.08);outline:none}.last-price{font-size:10px;color:var(--muted);margin-top:6px}.last-price b{color:#554b5b}
+.extra-fields{display:grid;gap:9px;margin-top:13px;padding-top:13px;border-top:1px solid #f0edf2}.fl{display:block;font-size:11px;font-weight:800;color:#5c5461;margin:0 0 4px}.extra-fields input,.extra-fields textarea{width:100%;border:1px solid var(--border-strong);background:#fff;color:var(--text);border-radius:10px;padding:10px 11px}.extra-fields textarea{resize:vertical;min-height:72px}
+.action-zone{position:sticky;bottom:10px;z-index:15;margin-top:14px;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:17px;padding:10px;box-shadow:0 14px 40px rgba(39,27,45,.13);display:flex;gap:8px;align-items:center}.btn{border:0;background:var(--purple);color:#fff;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn:hover{background:var(--purple-2)}.btn:disabled{opacity:.6;cursor:wait}.btn.primary{flex:1;font-size:15px}.btn.secondary{background:var(--surface);color:var(--purple);border:1px solid var(--border);font-size:12px}.btn.secondary:hover{background:var(--purple-soft)}
+.erro{color:var(--red);font-size:12px;font-weight:650;min-height:1.2em;margin:9px 3px}.loading{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}.loading-dot{width:36px;height:36px;border:3px solid var(--purple-soft);border-top-color:var(--purple);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.invalid{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px;box-shadow:var(--shadow)}.invalid-icon{width:52px;height:52px;margin:0 auto 12px;display:grid;place-items:center;border-radius:50%;background:#fff0ee;color:var(--red);font-size:22px;font-weight:900}.invalid h2{margin:0 0 6px;color:var(--purple)}.invalid p{margin:0;color:var(--muted)}
+.sucesso{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:34px 22px;box-shadow:var(--shadow)}.sucesso .v{width:66px;height:66px;border-radius:50%;background:var(--green-bg);color:var(--green);font-size:28px;font-weight:900;display:grid;place-items:center;margin:0 auto 13px}.sucesso h2{color:var(--purple)}.sucesso p{color:var(--muted)}
+.footer{text-align:center;color:#a099a3;font-size:10px;padding:12px 0 0}
+@media(max-width:650px){.site-head{padding:9px 13px}.site-head img{width:92px;height:39px}.site-head-copy span{display:none}main{padding:15px 11px 104px}.welcome{padding:18px;border-radius:18px}.welcome h2{font-size:22px}.station-card{padding:14px;border-radius:17px}.price-grid{grid-template-columns:1fr}.price-field{display:grid;grid-template-columns:1fr minmax(130px,170px);column-gap:10px;align-items:center}.price-field label{margin:0}.price-input{grid-column:2;grid-row:1 / span 2}.last-price{grid-column:1;grid-row:2;margin:2px 0 0}.action-zone{bottom:max(8px,env(safe-area-inset-bottom));flex-direction:column}.btn{width:100%}}
+</style>
 </head>
 <body>
-<header><img src="logo.png" alt="AGT-LOG Logística e Cargas"><h1>Informar preços de hoje</h1></header>
+<header class="site-head"><div class="site-head-inner"><img src="logo.png" alt="AGT-LOG Logística e Cargas"><div class="site-head-copy"><strong>Atualização de preços</strong><span>Canal exclusivo para responsáveis de postos</span></div></div></header>
 <main>
- <div class="card" id="box"><p>Carregando…</p></div>
+ <div class="card" id="box"><div class="loading"><div class="loading-dot"></div><p>Carregando suas unidades…</p></div></div>
+ <div class="footer">AGT-LOG · Controle de preços de combustível</div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -85,14 +42,10 @@ async function iniciar(){
  const {data,error}=await sb.rpc("carregar_tela",{p_token:tk});
  if(error||!data)return invalido();
  T=data;desenhar()}
-function invalido(){$("box").innerHTML=`<h2 style="margin-top:0">Link inválido</h2><p>Este link não está ativo. Peça um novo link à equipe da AGT-LOG.</p>`}
+function invalido(){$("box").innerHTML=`<div class="invalid"><div class="invalid-icon">!</div><h2>Link inválido</h2><p>Este link não está ativo. Peça um novo link à equipe da AGT-LOG.</p></div>`}
 function desenhar(){
- $("box").innerHTML=`<h2 style="margin:0 0 4px">Olá, ${esc(T.responsavel)}</h2><p class="nota" style="margin:0 0 6px">Informe o preço de hoje, em reais por litro. Deixe em branco o que a unidade não vende. O valor em cinza é o último que você enviou.</p><div id="us"></div><p class="erro" id="er" role="alert"></p>
- <div class="bar"><button class="btn" id="env" style="font-size:1.05rem;padding:10px 20px">Enviar preços de hoje</button>${T.postos.length>1?`<button class="btn sm" id="igual">Copiar a 1ª unidade para todas</button>`:""}</div>`;
- $("us").innerHTML=T.postos.map((p,j)=>{const c=p.config||{};return `<div class="un"><div><b>${esc(p.nome)}</b><div class="nota" style="margin:0">${esc(p.cidade)}${p.uf?" - "+p.uf:""}</div>
-  ${c.observacao?`<label class="fl" style="margin-top:8px" for="o${j}">Observação (opcional)</label><textarea id="o${j}" rows="2"></textarea>`:""}
-  ${(c.extras||[]).map((e,x)=>`<label class="fl" style="margin-top:8px" for="x${j}_${x}">${esc(e.label)}</label><input id="x${j}_${x}" style="width:100%" autocomplete="off">`).join("")}</div>
-  <div class="in">${(p.produtos||[]).map(k=>`<div><label for="u${j}${k}">${NM[k]}</label><input id="u${j}${k}" inputmode="decimal" placeholder="${f(p.ultimos?.[k])||"0,00"}" autocomplete="off"></div>`).join("")}</div></div>`}).join("");
+ $("box").innerHTML=`<section class="welcome"><div class="eyebrow">Atualização diária</div><h2>Olá, ${esc(T.responsavel)}</h2><p>Informe os preços praticados hoje nas unidades abaixo. O envio leva poucos segundos.</p></section><div class="info-note"><span class="info-icon">i</span><div><b>Como preencher:</b> digite apenas os preços dos combustíveis vendidos pela unidade. O último valor informado aparece abaixo de cada campo para conferência.</div></div><div class="units" id="us"></div><p class="erro" id="er" role="alert"></p><div class="action-zone"><button class="btn primary" id="env">Enviar preços de hoje</button>${T.postos.length>1?`<button class="btn secondary" id="igual">Copiar valores da 1ª unidade</button>`:""}</div>`;
+ $("us").innerHTML=T.postos.map((p,j)=>{const c=p.config||{};return `<article class="station-card"><div class="station-top"><div><div class="station-name">${esc(p.nome)}</div><div class="station-place">${esc(p.cidade)}${p.uf?" · "+p.uf:""}</div></div><span class="station-chip">Unidade ${j+1}</span></div><div class="price-grid">${(p.produtos||[]).map(k=>`<div class="price-field"><label for="u${j}${k}">${NM[k]}</label><div class="price-input"><span>R$</span><input id="u${j}${k}" inputmode="decimal" placeholder="0,00" autocomplete="off"></div><div class="last-price">Último informado: <b>${p.ultimos?.[k]!=null?"R$ "+f(p.ultimos[k]):"sem valor anterior"}</b></div></div>`).join("")}</div>${c.observacao||(c.extras||[]).length?`<div class="extra-fields">${c.observacao?`<div><label class="fl" for="o${j}">Observação (opcional)</label><textarea id="o${j}" rows="2" placeholder="Digite uma observação, se necessário"></textarea></div>`:""}${(c.extras||[]).map((e,x)=>`<div><label class="fl" for="x${j}_${x}">${esc(e.label)}</label><input id="x${j}_${x}" autocomplete="off"></div>`).join("")}</div>`:""}</article>`}).join("");
  $("env").onclick=enviar;
  if($("igual"))$("igual").onclick=()=>{["s10","s500","arla"].forEach(k=>{const v=$("u0"+k)?.value;if(v===undefined)return;T.postos.forEach((_,j)=>{const i=$("u"+j+k);if(i)i.value=v})})}}
 async function enviar(){
@@ -107,7 +60,7 @@ async function enviar(){
  E.textContent="";$("env").disabled=true;
  const {data,error}=await sb.rpc("enviar_precos",{p_token:tk,p_itens:itens});
  if(error){$("env").disabled=false;E.textContent="Não foi possível enviar agora. Tente novamente em instantes.";return}
- $("box").innerHTML=`<div class="sucesso"><div class="v">✓</div><h2 style="margin:0 0 6px">Preços enviados</h2><p style="color:var(--mut);margin:0 0 12px">${T.postos.length>1?T.postos.length+" unidades registradas":"Unidade registrada"} às ${new Date().toTimeString().slice(0,5)}. Obrigado!</p><button class="btn" id="corr">Corrigir valores</button></div>`;
+ $("box").innerHTML=`<div class="sucesso"><div class="v">✓</div><h2 style="margin:0 0 7px">Preços enviados</h2><p style="margin:0 0 16px">${T.postos.length>1?T.postos.length+" unidades registradas":"Unidade registrada"} às ${new Date().toTimeString().slice(0,5)}. Obrigado pela atualização!</p><button class="btn" id="corr">Corrigir valores</button></div>`;
  $("corr").onclick=iniciar}
 iniciar();
 </script>
