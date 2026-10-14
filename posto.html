@@ -20,8 +20,16 @@ main{max-width:850px;margin:0 auto;padding:24px 16px 110px}.card{background:tran
 .erro{color:var(--red);font-size:12px;font-weight:650;min-height:1.2em;margin:9px 3px}.loading{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}.loading-dot{width:36px;height:36px;border:3px solid var(--purple-soft);border-top-color:var(--purple);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .invalid{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px;box-shadow:var(--shadow)}.invalid-icon{width:52px;height:52px;margin:0 auto 12px;display:grid;place-items:center;border-radius:50%;background:#fff0ee;color:var(--red);font-size:22px;font-weight:900}.invalid h2{margin:0 0 6px;color:var(--purple)}.invalid p{margin:0;color:var(--muted)}
 .sucesso{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:34px 22px;box-shadow:var(--shadow)}.sucesso .v{width:66px;height:66px;border-radius:50%;background:var(--green-bg);color:var(--green);font-size:28px;font-weight:900;display:grid;place-items:center;margin:0 auto 13px}.sucesso h2{color:var(--purple)}.sucesso p{color:var(--muted)}
+
+.lock-panel{background:linear-gradient(180deg,#fbf8fc,#f5f0f7);border:1px solid #e5dce9;border-radius:16px;padding:18px;text-align:center}
+.lock-icon{width:46px;height:46px;margin:0 auto 9px;border-radius:14px;display:grid;place-items:center;background:var(--purple);color:#fff;font-size:21px;box-shadow:0 7px 20px rgba(53,35,68,.16)}
+.lock-title{font-weight:850;color:var(--purple);font-size:15px}.lock-copy{font-size:12px;color:var(--muted);margin:3px 0 12px}
+.countdown{font-variant-numeric:tabular-nums;font-size:32px;line-height:1;font-weight:900;letter-spacing:.04em;color:var(--purple);background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 12px;max-width:280px;margin:0 auto 12px;box-shadow:0 5px 18px rgba(39,27,45,.05)}
+.lock-dates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.lock-date{background:#fff;border:1px solid var(--border);border-radius:11px;padding:9px}.lock-date span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#8a818e;font-weight:800}.lock-date b{display:block;margin-top:2px;font-size:11px;color:#4e4553}
+.manual-note{display:flex;gap:8px;align-items:center;background:var(--green-bg);border:1px solid #cfeadb;color:var(--green);border-radius:11px;padding:9px 10px;font-size:11px;font-weight:750;margin-bottom:12px}.manual-note .dot{width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:11px;flex:0 0 auto}
+.status-summary{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:12px 13px;font-size:12px;color:var(--muted);flex:1}.status-summary b{color:var(--purple)}
 .footer{text-align:center;color:#a099a3;font-size:10px;padding:12px 0 0}
-@media(max-width:650px){.site-head{padding:9px 13px}.site-head img{width:92px;height:39px}.site-head-copy span{display:none}main{padding:15px 11px 104px}.welcome{padding:18px;border-radius:18px}.welcome h2{font-size:22px}.station-card{padding:14px;border-radius:17px}.price-grid{grid-template-columns:1fr}.price-field{display:grid;grid-template-columns:1fr minmax(130px,170px);column-gap:10px;align-items:center}.price-field label{margin:0}.price-input{grid-column:2;grid-row:1 / span 2}.last-price{grid-column:1;grid-row:2;margin:2px 0 0}.action-zone{bottom:max(8px,env(safe-area-inset-bottom));flex-direction:column}.btn{width:100%}}
+@media(max-width:650px){.lock-dates{grid-template-columns:1fr}.countdown{font-size:28px}.site-head{padding:9px 13px}.site-head img{width:92px;height:39px}.site-head-copy span{display:none}main{padding:15px 11px 104px}.welcome{padding:18px;border-radius:18px}.welcome h2{font-size:22px}.station-card{padding:14px;border-radius:17px}.price-grid{grid-template-columns:1fr}.price-field{display:grid;grid-template-columns:1fr minmax(130px,170px);column-gap:10px;align-items:center}.price-field label{margin:0}.price-input{grid-column:2;grid-row:1 / span 2}.last-price{grid-column:1;grid-row:2;margin:2px 0 0}.action-zone{bottom:max(8px,env(safe-area-inset-bottom));flex-direction:column}.btn{width:100%}}
 </style>
 </head>
 <body>
@@ -33,36 +41,84 @@ main{max-width:850px;margin:0 auto;padding:24px 16px 110px}.card{background:tran
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script>
-const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])),f=v=>v==null?"":Number(v).toFixed(2).replace(".",",");
+
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])),f=v=>v==null?"":Number(v).toFixed(2).replace(".",",");
 const sb=supabase.createClient(CFG.url,CFG.key),NM={s10:"Diesel S-10",s500:"Diesel S-500",arla:"Arla"},tk=new URLSearchParams(location.search).get("t");
-let T=null;
+let T=null,clockTimer=null,serverOffset=0,refreshing=false;
 const num=s=>{const n=parseFloat(String(s).replace(",","."));return isNaN(n)?null:n};
+const money=v=>v==null?"sem valor anterior":"R$ "+f(v);
+const dateTime=iso=>{if(!iso)return "—";const d=new Date(iso);return d.toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"})};
+const formatClock=seconds=>{const s=Math.max(0,Math.ceil(Number(seconds)||0)),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`};
+function clearClock(){if(clockTimer){clearInterval(clockTimer);clockTimer=null}}
 async function iniciar(){
+ clearClock();refreshing=false;
  if(!tk)return invalido();
  const {data,error}=await sb.rpc("carregar_tela",{p_token:tk});
  if(error||!data)return invalido();
- T=data;desenhar()}
-function invalido(){$("box").innerHTML=`<div class="invalid"><div class="invalid-icon">!</div><h2>Link inválido</h2><p>Este link não está ativo. Peça um novo link à equipe da AGT-LOG.</p></div>`}
+ T=data;
+ const serverNow=Date.parse(T.agora_servidor||"");
+ serverOffset=Number.isFinite(serverNow)?serverNow-Date.now():0;
+ desenhar();
+ iniciarContadores();
+}
+function invalido(){clearClock();$("box").innerHTML=`<div class="invalid"><div class="invalid-icon">!</div><h2>Link inválido</h2><p>Este link não está ativo. Peça um novo link à equipe da AGT-LOG.</p></div>`}
+function cardEditavel(p,j){
+ const c=p.config||{};
+ return `${p.liberado_manual?`<div class="manual-note"><span class="dot">✓</span><span>Edição liberada pela administração para correção deste envio.</span></div>`:""}<div class="price-grid">${(p.produtos||[]).map(k=>`<div class="price-field"><label for="u${j}${k}">${NM[k]}</label><div class="price-input"><span>R$</span><input id="u${j}${k}" inputmode="decimal" placeholder="0,00" autocomplete="off"></div><div class="last-price">Último informado: <b>${money(p.ultimos?.[k])}</b></div></div>`).join("")}</div>${c.observacao||(c.extras||[]).length?`<div class="extra-fields">${c.observacao?`<div><label class="fl" for="o${j}">Observação (opcional)</label><textarea id="o${j}" rows="2" placeholder="Digite uma observação, se necessário"></textarea></div>`:""}${(c.extras||[]).map((e,x)=>`<div><label class="fl" for="x${j}_${x}">${esc(e.label)}</label><input id="x${j}_${x}" autocomplete="off"></div>`).join("")}</div>`:""}`;
+}
+function cardBloqueado(p,j){
+ return `<div class="lock-panel"><div class="lock-icon">🔒</div><div class="lock-title">Preços já informados</div><div class="lock-copy">Esta unidade poderá ser atualizada novamente quando o prazo abaixo chegar a zero.</div><div class="countdown" id="cd${j}">${formatClock(p.segundos_restantes)}</div><div class="lock-dates"><div class="lock-date"><span>Última atualização</span><b>${dateTime(p.ultima_atualizacao)}</b></div><div class="lock-date"><span>Disponível novamente</span><b>${dateTime(p.proxima_atualizacao)}</b></div></div></div>`;
+}
 function desenhar(){
- $("box").innerHTML=`<section class="welcome"><div class="eyebrow">Atualização diária</div><h2>Olá, ${esc(T.responsavel)}</h2><p>Informe os preços praticados hoje nas unidades abaixo. O envio leva poucos segundos.</p></section><div class="info-note"><span class="info-icon">i</span><div><b>Como preencher:</b> digite apenas os preços dos combustíveis vendidos pela unidade. O último valor informado aparece abaixo de cada campo para conferência.</div></div><div class="units" id="us"></div><p class="erro" id="er" role="alert"></p><div class="action-zone"><button class="btn primary" id="env">Enviar preços de hoje</button>${T.postos.length>1?`<button class="btn secondary" id="igual">Copiar valores da 1ª unidade</button>`:""}</div>`;
- $("us").innerHTML=T.postos.map((p,j)=>{const c=p.config||{};return `<article class="station-card"><div class="station-top"><div><div class="station-name">${esc(p.nome)}</div><div class="station-place">${esc(p.cidade)}${p.uf?" · "+p.uf:""}</div></div><span class="station-chip">Unidade ${j+1}</span></div><div class="price-grid">${(p.produtos||[]).map(k=>`<div class="price-field"><label for="u${j}${k}">${NM[k]}</label><div class="price-input"><span>R$</span><input id="u${j}${k}" inputmode="decimal" placeholder="0,00" autocomplete="off"></div><div class="last-price">Último informado: <b>${p.ultimos?.[k]!=null?"R$ "+f(p.ultimos[k]):"sem valor anterior"}</b></div></div>`).join("")}</div>${c.observacao||(c.extras||[]).length?`<div class="extra-fields">${c.observacao?`<div><label class="fl" for="o${j}">Observação (opcional)</label><textarea id="o${j}" rows="2" placeholder="Digite uma observação, se necessário"></textarea></div>`:""}${(c.extras||[]).map((e,x)=>`<div><label class="fl" for="x${j}_${x}">${esc(e.label)}</label><input id="x${j}_${x}" autocomplete="off"></div>`).join("")}</div>`:""}</article>`}).join("");
- $("env").onclick=enviar;
- if($("igual"))$("igual").onclick=()=>{["s10","s500","arla"].forEach(k=>{const v=$("u0"+k)?.value;if(v===undefined)return;T.postos.forEach((_,j)=>{const i=$("u"+j+k);if(i)i.value=v})})}}
+ const editaveis=T.postos.filter(p=>p.pode_editar).length,bloqueados=T.postos.length-editaveis;
+ $("box").innerHTML=`<section class="welcome"><div class="eyebrow">Atualização de preços</div><h2>Olá, ${esc(T.responsavel)}</h2><p>${editaveis?"Preencha apenas as unidades disponíveis abaixo.":"Todas as suas unidades estão dentro do período de bloqueio de 48 horas."}</p></section><div class="info-note"><span class="info-icon">i</span><div><b>Regra de atualização:</b> após um envio, a unidade fica bloqueada por 48 horas. Se houver algum valor incorreto, a administração pode liberar uma correção antecipada.</div></div><div class="units" id="us"></div><p class="erro" id="er" role="alert"></p>${editaveis?`<div class="action-zone"><div class="status-summary"><b>${editaveis}</b> ${editaveis===1?"unidade disponível":"unidades disponíveis"}${bloqueados?` · ${bloqueados} ${bloqueados===1?"bloqueada":"bloqueadas"}`:""}</div><button class="btn primary" id="env">Enviar preços disponíveis</button>${editaveis>1?`<button class="btn secondary" id="igual">Copiar valores da 1ª disponível</button>`:""}</div>`:`<div class="action-zone"><div class="status-summary"><b>Nenhuma unidade disponível agora.</b> Os campos serão liberados automaticamente quando o contador chegar a 00:00:00.</div></div>`}`;
+ $("us").innerHTML=T.postos.map((p,j)=>`<article class="station-card"><div class="station-top"><div><div class="station-name">${esc(p.nome)}</div><div class="station-place">${esc(p.cidade)}${p.uf?" · "+p.uf:""}</div></div><span class="station-chip">${p.pode_editar?(p.liberado_manual?"Correção liberada":"Disponível"):"Bloqueado 48h"}</span></div>${p.pode_editar?cardEditavel(p,j):cardBloqueado(p,j)}</article>`).join("");
+ if($("env"))$("env").onclick=enviar;
+ if($("igual"))$("igual").onclick=copiarPrimeiraDisponivel;
+}
+function copiarPrimeiraDisponivel(){
+ const indices=T.postos.map((p,j)=>p.pode_editar?j:null).filter(j=>j!==null);
+ if(indices.length<2)return;
+ const base=indices[0];
+ ["s10","s500","arla"].forEach(k=>{const v=$("u"+base+k)?.value;if(v===undefined)return;indices.forEach(j=>{const i=$("u"+j+k);if(i)i.value=v})});
+}
+function iniciarContadores(){
+ const atualizar=()=>{
+  let venceu=false;
+  const agora=Date.now()+serverOffset;
+  T.postos.forEach((p,j)=>{
+   if(p.pode_editar||!p.proxima_atualizacao)return;
+   const el=$("cd"+j);if(!el)return;
+   const fim=Date.parse(p.proxima_atualizacao);
+   const restante=Math.max(0,Math.ceil((fim-agora)/1000));
+   el.textContent=formatClock(restante);
+   if(restante<=0)venceu=true;
+  });
+  if(venceu&&!refreshing){refreshing=true;clearClock();iniciar()}
+ };
+ atualizar();
+ clockTimer=setInterval(atualizar,1000);
+}
 async function enviar(){
  const itens=[],E=$("er");
- for(let j=0;j<T.postos.length;j++){const p=T.postos[j],c=p.config||{};let any=false;const ex={};
-  if(c.observacao&&$("o"+j).value.trim())ex.observacao=$("o"+j).value.trim();
-  (c.extras||[]).forEach((e,x)=>{const v=$(`x${j}_${x}`).value.trim();if(v)ex[e.id]=v});
-  for(const k of p.produtos||[]){const raw=$("u"+j+k).value.trim();if(!raw)continue;const v=num(raw);
+ const editaveis=T.postos.map((p,j)=>({p,j})).filter(x=>x.p.pode_editar);
+ if(!editaveis.length){E.textContent="Nenhuma unidade está disponível para atualização neste momento.";return}
+ for(const {p,j} of editaveis){const c=p.config||{};let any=false;const ex={};
+  if(c.observacao&&$("o"+j)?.value.trim())ex.observacao=$("o"+j).value.trim();
+  (c.extras||[]).forEach((e,x)=>{const el=$(`x${j}_${x}`),v=el?el.value.trim():"";if(v)ex[e.id]=v});
+  for(const k of p.produtos||[]){const el=$("u"+j+k),raw=el?el.value.trim():"";if(!raw)continue;const v=num(raw);
    if(v==null||v<1||v>12){E.textContent=`Confira o preço de ${NM[k]} em ${p.nome} (${p.cidade}): use reais por litro, por exemplo 6,89.`;return}
    itens.push({posto_id:p.id,produto:k,valor:v,extras:ex});any=true}
   if(!any){E.textContent=`Faltam preços em ${p.nome} (${p.cidade}). Informe pelo menos um combustível.`;return}}
- E.textContent="";$("env").disabled=true;
+ E.textContent="";$("env").disabled=true;$("env").textContent="Enviando…";
  const {data,error}=await sb.rpc("enviar_precos",{p_token:tk,p_itens:itens});
- if(error){$("env").disabled=false;E.textContent="Não foi possível enviar agora. Tente novamente em instantes.";return}
- $("box").innerHTML=`<div class="sucesso"><div class="v">✓</div><h2 style="margin:0 0 7px">Preços enviados</h2><p style="margin:0 0 16px">${T.postos.length>1?T.postos.length+" unidades registradas":"Unidade registrada"} às ${new Date().toTimeString().slice(0,5)}. Obrigado pela atualização!</p><button class="btn" id="corr">Corrigir valores</button></div>`;
- $("corr").onclick=iniciar}
+ if(error){$("env").disabled=false;$("env").textContent="Enviar preços disponíveis";E.textContent=error.message||"Não foi possível enviar agora. Tente novamente em instantes.";return}
+ clearClock();
+ $("box").innerHTML=`<div class="sucesso"><div class="v">✓</div><h2 style="margin:0 0 7px">Preços enviados</h2><p style="margin:0 0 16px">A atualização foi registrada. As unidades enviadas agora ficam bloqueadas por 48 horas.</p><button class="btn" id="corr">Ver prazo para nova atualização</button></div>`;
+ $("corr").onclick=iniciar;
+}
 iniciar();
+
 </script>
 </body>
 </html>
