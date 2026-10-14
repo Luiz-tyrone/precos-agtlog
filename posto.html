@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>AGT-LOG · Informar preços</title>
+<style>
+:root{--roxo:#381E42;--amar:#FFCE42;--bg:#F6F3F8;--surf:#fff;--tx:#241529;--mut:#6B5C73;--bd:#E2DBE7;--ok:#1E7A4A;--ok-bg:#E3F4EA;--pend-bg:#FFF3CC;--pend-tx:#7A5A00;--lin:#D99A00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171019;--surf:#241829;--tx:#F3EDF5;--mut:#B3A4BB;--bd:#3C2D44;--ok:#6FD39C;--ok-bg:#183626;--pend-bg:#3F3210;--pend-tx:#FFD966}}
+:root[data-theme="dark"]{--bg:#171019;--surf:#241829;--tx:#F3EDF5;--mut:#B3A4BB;--bd:#3C2D44;--ok:#6FD39C;--ok-bg:#183626;--pend-bg:#3F3210;--pend-tx:#FFD966}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 "Barlow","Segoe UI",Roboto,Arial,sans-serif}
+header{background:var(--roxo);border-bottom:5px solid var(--amar);padding:8px 16px;display:flex;align-items:center;gap:14px}
+header img{height:42px;background:#fff;border-radius:6px;padding:3px 8px}
+header h1{margin:0;font-size:1.05rem;color:var(--amar);font-weight:600}
+header span{margin-left:auto;color:#fff;font-size:.85rem;opacity:.85}
+.app{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 62px)}
+aside{background:var(--surf);border-right:1px solid var(--bd);padding:14px 10px;display:flex;flex-direction:column;gap:4px}
+aside button{font:inherit;font-weight:600;text-align:left;background:none;color:var(--tx);border:0;border-left:5px solid transparent;border-radius:6px;padding:10px 12px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+aside button[aria-current=true]{background:var(--bg);border-left-color:var(--amar)}
+aside button em{font-style:normal;font-size:.8rem;background:var(--pend-bg);color:var(--pend-tx);border-radius:99px;padding:0 8px}
+aside hr{border:0;border-top:1px solid var(--bd);width:100%;margin:8px 0}
+main{padding:18px;min-width:0}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--amar);outline-offset:2px}
+.nota{font-size:.85rem;color:var(--mut);margin:0 0 14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--surf);border:1px solid var(--bd);border-left:6px solid var(--amar);border-radius:10px;padding:10px 14px}
+.kpi b{display:block;font-size:1.5rem;line-height:1.2}.kpi span{color:var(--mut);font-size:.85rem}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.bar input[type=search]{flex:1;min-width:200px}
+input,select{font:inherit;padding:8px 10px;border-radius:8px;border:2px solid var(--bd);background:var(--surf);color:var(--tx)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font:inherit;font-weight:600;font-size:.9rem;background:var(--surf);color:var(--tx);border:2px solid var(--bd);border-radius:99px;padding:3px 12px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--roxo);border-color:var(--roxo);color:var(--amar)}
+.chip small{opacity:.7;margin-left:4px}.chip i{font-style:normal;background:var(--amar);color:var(--roxo);border-radius:99px;padding:0 6px;margin-left:4px;font-size:.75rem}
+.scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:10px}
+table{width:100%;border-collapse:collapse;background:var(--surf);min-width:900px}
+th{background:var(--roxo);color:#fff;text-align:left;padding:8px 10px;font-weight:600;font-size:.88rem;position:sticky;top:0;z-index:1}
+td{padding:7px 10px;border-top:1px solid var(--bd)}
+.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.g td{background:var(--bg);padding:0}
+tr.g button{font:inherit;font-weight:700;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:7px 10px;cursor:pointer}
+tr.g button span{color:var(--mut);font-weight:500;margin-left:8px}
+.old{color:var(--mut);font-style:italic}
+.min{background:var(--ok-bg);color:var(--ok);font-weight:700;border-radius:6px;padding:1px 7px}
+.pill{font-size:.78rem;font-weight:600;border-radius:99px;padding:2px 9px;white-space:nowrap}
+.pill.pend{background:var(--pend-bg);color:var(--pend-tx)}.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.btn{font:inherit;font-weight:700;background:var(--amar);color:var(--roxo);border:2px solid var(--roxo);border-radius:8px;padding:8px 16px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.sm{padding:2px 9px;font-size:.8rem}
+.av{color:#B3261E;font-size:.8rem}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:16px}
+.filtros{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:8px}
+.filtros label,.fl{display:block;font-weight:600;font-size:.88rem;margin-bottom:3px}.filtros select,.filtros input{width:100%}
+.erro{color:#B3261E;font-size:.9rem;min-height:1.2em;margin:4px 0}
+.resumo{display:flex;gap:18px;flex-wrap:wrap;margin:0 0 8px}.resumo span{color:var(--mut)}.resumo b{color:var(--tx)}
+.rolar{max-height:300px;overflow:auto;margin-bottom:12px}.rolar table{min-width:380px}
+svg text{fill:var(--mut);font-size:11px}
+.un{border-top:1px solid var(--bd);padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center}
+.un .in{display:flex;gap:6px;flex-wrap:wrap}
+.un .in label{font-size:.75rem;color:var(--mut);display:block}.un .in input{width:92px;font-weight:700;padding:6px 8px}
+.sucesso{text-align:center;padding:16px 0}.sucesso .v{width:60px;height:60px;border-radius:50%;background:var(--amar);color:var(--roxo);font-size:1.9rem;font-weight:800;display:grid;place-items:center;margin:0 auto 10px}
+[hidden]{display:none!important}
+@media(max-width:800px){.app{grid-template-columns:1fr}aside{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd);padding:6px}aside hr{display:none}aside button{border-left:0;border-bottom:4px solid transparent;white-space:nowrap}aside button[aria-current=true]{border-bottom-color:var(--amar)}main{padding:12px}.un{grid-template-columns:1fr}}
+
+dialog{border:1px solid var(--bd);border-radius:12px;background:var(--surf);color:var(--tx);max-width:460px;width:92%;padding:18px}dialog::backdrop{background:#0008}textarea{font:inherit;width:100%;padding:8px;border-radius:8px;border:2px solid var(--bd);background:var(--bg);color:var(--tx)}.ck{display:flex;gap:8px;align-items:center;margin:6px 0}
+ main{max-width:760px;margin:0 auto}</style>
+</head>
+<body>
+<header><img src="logo.png" alt="AGT-LOG Logística e Cargas"><h1>Informar preços de hoje</h1></header>
+<main>
+ <div class="card" id="box"><p>Carregando…</p></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])),f=v=>v==null?"":Number(v).toFixed(2).replace(".",",");
+const sb=supabase.createClient(CFG.url,CFG.key),NM={s10:"Diesel S-10",s500:"Diesel S-500",arla:"Arla"},tk=new URLSearchParams(location.search).get("t");
+let T=null;
+const num=s=>{const n=parseFloat(String(s).replace(",","."));return isNaN(n)?null:n};
+async function iniciar(){
+ if(!tk)return invalido();
+ const {data,error}=await sb.rpc("carregar_tela",{p_token:tk});
+ if(error||!data)return invalido();
+ T=data;desenhar()}
+function invalido(){$("box").innerHTML=`<h2 style="margin-top:0">Link inválido</h2><p>Este link não está ativo. Peça um novo link à equipe da AGT-LOG.</p>`}
+function desenhar(){
+ $("box").innerHTML=`<h2 style="margin:0 0 4px">Olá, ${esc(T.responsavel)}</h2><p class="nota" style="margin:0 0 6px">Informe o preço de hoje, em reais por litro. Deixe em branco o que a unidade não vende. O valor em cinza é o último que você enviou.</p><div id="us"></div><p class="erro" id="er" role="alert"></p>
+ <div class="bar"><button class="btn" id="env" style="font-size:1.05rem;padding:10px 20px">Enviar preços de hoje</button>${T.postos.length>1?`<button class="btn sm" id="igual">Copiar a 1ª unidade para todas</button>`:""}</div>`;
+ $("us").innerHTML=T.postos.map((p,j)=>{const c=p.config||{};return `<div class="un"><div><b>${esc(p.nome)}</b><div class="nota" style="margin:0">${esc(p.cidade)}${p.uf?" - "+p.uf:""}</div>
+  ${c.observacao?`<label class="fl" style="margin-top:8px" for="o${j}">Observação (opcional)</label><textarea id="o${j}" rows="2"></textarea>`:""}
+  ${(c.extras||[]).map((e,x)=>`<label class="fl" style="margin-top:8px" for="x${j}_${x}">${esc(e.label)}</label><input id="x${j}_${x}" style="width:100%" autocomplete="off">`).join("")}</div>
+  <div class="in">${(p.produtos||[]).map(k=>`<div><label for="u${j}${k}">${NM[k]}</label><input id="u${j}${k}" inputmode="decimal" placeholder="${f(p.ultimos?.[k])||"0,00"}" autocomplete="off"></div>`).join("")}</div></div>`}).join("");
+ $("env").onclick=enviar;
+ if($("igual"))$("igual").onclick=()=>{["s10","s500","arla"].forEach(k=>{const v=$("u0"+k)?.value;if(v===undefined)return;T.postos.forEach((_,j)=>{const i=$("u"+j+k);if(i)i.value=v})})}}
+async function enviar(){
+ const itens=[],E=$("er");
+ for(let j=0;j<T.postos.length;j++){const p=T.postos[j],c=p.config||{};let any=false;const ex={};
+  if(c.observacao&&$("o"+j).value.trim())ex.observacao=$("o"+j).value.trim();
+  (c.extras||[]).forEach((e,x)=>{const v=$(`x${j}_${x}`).value.trim();if(v)ex[e.id]=v});
+  for(const k of p.produtos||[]){const raw=$("u"+j+k).value.trim();if(!raw)continue;const v=num(raw);
+   if(v==null||v<1||v>12){E.textContent=`Confira o preço de ${NM[k]} em ${p.nome} (${p.cidade}): use reais por litro, por exemplo 6,89.`;return}
+   itens.push({posto_id:p.id,produto:k,valor:v,extras:ex});any=true}
+  if(!any){E.textContent=`Faltam preços em ${p.nome} (${p.cidade}). Informe pelo menos um combustível.`;return}}
+ E.textContent="";$("env").disabled=true;
+ const {data,error}=await sb.rpc("enviar_precos",{p_token:tk,p_itens:itens});
+ if(error){$("env").disabled=false;E.textContent="Não foi possível enviar agora. Tente novamente em instantes.";return}
+ $("box").innerHTML=`<div class="sucesso"><div class="v">✓</div><h2 style="margin:0 0 6px">Preços enviados</h2><p style="color:var(--mut);margin:0 0 12px">${T.postos.length>1?T.postos.length+" unidades registradas":"Unidade registrada"} às ${new Date().toTimeString().slice(0,5)}. Obrigado!</p><button class="btn" id="corr">Corrigir valores</button></div>`;
+ $("corr").onclick=iniciar}
+iniciar();
+</script>
+</body>
+</html>

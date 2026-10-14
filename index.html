@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AGT-LOG · Preços de combustível</title>
+<style>
+:root{--roxo:#381E42;--amar:#FFCE42;--bg:#F6F3F8;--surf:#fff;--tx:#241529;--mut:#6B5C73;--bd:#E2DBE7;--ok:#1E7A4A;--ok-bg:#E3F4EA;--pend-bg:#FFF3CC;--pend-tx:#7A5A00;--lin:#D99A00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171019;--surf:#241829;--tx:#F3EDF5;--mut:#B3A4BB;--bd:#3C2D44;--ok:#6FD39C;--ok-bg:#183626;--pend-bg:#3F3210;--pend-tx:#FFD966}}
+:root[data-theme="dark"]{--bg:#171019;--surf:#241829;--tx:#F3EDF5;--mut:#B3A4BB;--bd:#3C2D44;--ok:#6FD39C;--ok-bg:#183626;--pend-bg:#3F3210;--pend-tx:#FFD966}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 "Barlow","Segoe UI",Roboto,Arial,sans-serif}
+header{background:var(--roxo);border-bottom:5px solid var(--amar);padding:8px 16px;display:flex;align-items:center;gap:14px}
+header img{height:42px;background:#fff;border-radius:6px;padding:3px 8px}
+header h1{margin:0;font-size:1.05rem;color:var(--amar);font-weight:600}
+header span{margin-left:auto;color:#fff;font-size:.85rem;opacity:.85}
+.app{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 62px)}
+aside{background:var(--surf);border-right:1px solid var(--bd);padding:14px 10px;display:flex;flex-direction:column;gap:4px}
+aside button{font:inherit;font-weight:600;text-align:left;background:none;color:var(--tx);border:0;border-left:5px solid transparent;border-radius:6px;padding:10px 12px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+aside button[aria-current=true]{background:var(--bg);border-left-color:var(--amar)}
+aside button em{font-style:normal;font-size:.8rem;background:var(--pend-bg);color:var(--pend-tx);border-radius:99px;padding:0 8px}
+aside hr{border:0;border-top:1px solid var(--bd);width:100%;margin:8px 0}
+main{padding:18px;min-width:0}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--amar);outline-offset:2px}
+.nota{font-size:.85rem;color:var(--mut);margin:0 0 14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--surf);border:1px solid var(--bd);border-left:6px solid var(--amar);border-radius:10px;padding:10px 14px}
+.kpi b{display:block;font-size:1.5rem;line-height:1.2}.kpi span{color:var(--mut);font-size:.85rem}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.bar input[type=search]{flex:1;min-width:200px}
+input,select{font:inherit;padding:8px 10px;border-radius:8px;border:2px solid var(--bd);background:var(--surf);color:var(--tx)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font:inherit;font-weight:600;font-size:.9rem;background:var(--surf);color:var(--tx);border:2px solid var(--bd);border-radius:99px;padding:3px 12px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--roxo);border-color:var(--roxo);color:var(--amar)}
+.chip small{opacity:.7;margin-left:4px}.chip i{font-style:normal;background:var(--amar);color:var(--roxo);border-radius:99px;padding:0 6px;margin-left:4px;font-size:.75rem}
+.scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:10px}
+table{width:100%;border-collapse:collapse;background:var(--surf);min-width:900px}
+th{background:var(--roxo);color:#fff;text-align:left;padding:8px 10px;font-weight:600;font-size:.88rem;position:sticky;top:0;z-index:1}
+td{padding:7px 10px;border-top:1px solid var(--bd)}
+.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.g td{background:var(--bg);padding:0}
+tr.g button{font:inherit;font-weight:700;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:7px 10px;cursor:pointer}
+tr.g button span{color:var(--mut);font-weight:500;margin-left:8px}
+.old{color:var(--mut);font-style:italic}
+.min{background:var(--ok-bg);color:var(--ok);font-weight:700;border-radius:6px;padding:1px 7px}
+.pill{font-size:.78rem;font-weight:600;border-radius:99px;padding:2px 9px;white-space:nowrap}
+.pill.pend{background:var(--pend-bg);color:var(--pend-tx)}.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.btn{font:inherit;font-weight:700;background:var(--amar);color:var(--roxo);border:2px solid var(--roxo);border-radius:8px;padding:8px 16px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.sm{padding:2px 9px;font-size:.8rem}
+.av{color:#B3261E;font-size:.8rem}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:16px}
+.filtros{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:8px}
+.filtros label,.fl{display:block;font-weight:600;font-size:.88rem;margin-bottom:3px}.filtros select,.filtros input{width:100%}
+.erro{color:#B3261E;font-size:.9rem;min-height:1.2em;margin:4px 0}
+.resumo{display:flex;gap:18px;flex-wrap:wrap;margin:0 0 8px}.resumo span{color:var(--mut)}.resumo b{color:var(--tx)}
+.rolar{max-height:300px;overflow:auto;margin-bottom:12px}.rolar table{min-width:380px}
+svg text{fill:var(--mut);font-size:11px}
+.un{border-top:1px solid var(--bd);padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center}
+.un .in{display:flex;gap:6px;flex-wrap:wrap}
+.un .in label{font-size:.75rem;color:var(--mut);display:block}.un .in input{width:92px;font-weight:700;padding:6px 8px}
+.sucesso{text-align:center;padding:16px 0}.sucesso .v{width:60px;height:60px;border-radius:50%;background:var(--amar);color:var(--roxo);font-size:1.9rem;font-weight:800;display:grid;place-items:center;margin:0 auto 10px}
+[hidden]{display:none!important}
+@media(max-width:800px){.app{grid-template-columns:1fr}aside{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd);padding:6px}aside hr{display:none}aside button{border-left:0;border-bottom:4px solid transparent;white-space:nowrap}aside button[aria-current=true]{border-bottom-color:var(--amar)}main{padding:12px}.un{grid-template-columns:1fr}}
+
+dialog{border:1px solid var(--bd);border-radius:12px;background:var(--surf);color:var(--tx);max-width:460px;width:92%;padding:18px}dialog::backdrop{background:#0008}textarea{font:inherit;width:100%;padding:8px;border-radius:8px;border:2px solid var(--bd);background:var(--bg);color:var(--tx)}.ck{display:flex;gap:8px;align-items:center;margin:6px 0}
+</style>
+</head>
+<body>
+<header><img src="logo.png" alt="AGT-LOG Logística e Cargas"><h1>Preços de combustível</h1><span id="usr"></span></header>
+<div class="card" id="login" style="max-width:380px;margin:40px auto">
+ <h2 style="margin-top:0">Entrar</h2>
+ <label class="fl" for="em">E-mail</label><input id="em" type="email" autocomplete="username" style="width:100%">
+ <label class="fl" for="pw" style="margin-top:10px">Senha</label><input id="pw" type="password" autocomplete="current-password" style="width:100%">
+ <p class="erro" id="lErr" role="alert"></p><button class="btn" id="go" style="width:100%">Entrar</button>
+</div>
+<div class="app" id="app" hidden>
+<aside aria-label="Menu">
+ <button data-v="hoje" aria-current="true">Hoje <em id="nPend"></em></button>
+ <button data-v="hist">Histórico</button>
+ <button data-v="cad">Postos</button>
+ <hr><button id="sair">Sair</button>
+</aside>
+<main>
+<section id="v-hoje">
+ <div class="kpis" id="kpis"></div>
+ <div class="bar">
+  <input type="search" id="q" placeholder="Buscar posto, cidade ou responsável" aria-label="Buscar">
+  <select id="ord" aria-label="Ordenar"><option value="uf">Agrupar por estado</option><option value="s10">Menor S-10</option><option value="s500">Menor S-500</option><option value="arla">Menor Arla</option><option value="ult">Mais tempo sem atualizar</option></select>
+  <label><input type="checkbox" id="pend"> Só aguardando</label>
+  <button class="btn sm" id="expAll">Expandir tudo</button><button class="btn sm" id="colAll">Recolher tudo</button>
+ </div>
+ <div class="chips" id="chips"></div>
+ <div class="scroll"><table id="tbl"></table></div>
+</section>
+<section id="v-hist" hidden>
+ <div class="filtros">
+  <div><label for="hP">Posto</label><select id="hP"></select></div>
+  <div><label for="hC">Combustível</label><select id="hC"><option value="s10">Diesel S-10</option><option value="s500">Diesel S-500</option><option value="arla">Arla</option></select></div>
+  <div><label for="hI">Data inicial</label><input type="date" id="hI"></div>
+  <div><label for="hF">Data final</label><input type="date" id="hF"></div>
+ </div>
+ <p class="erro" id="hErr" role="alert"></p><div id="hRes"></div>
+</section>
+<section id="v-cad" hidden>
+ <div class="bar"><input type="search" id="qc" placeholder="Buscar posto, cidade ou responsável" aria-label="Buscar no cadastro"></div>
+ <div class="scroll"><table id="tcad"></table></div>
+</section>
+</main></div>
+
+<dialog id="dlg">
+ <h3 style="margin-top:0" id="dT"></h3>
+ <p class="fl">Combustíveis que este posto informa</p>
+ <div id="dP"></div>
+ <label class="ck"><input type="checkbox" id="dObs"> Mostrar campo de observação</label>
+ <label class="fl" for="dEx" style="margin-top:10px">Campos extras (um por linha, ex.: Preço à vista)</label>
+ <textarea id="dEx" rows="3"></textarea>
+ <div class="bar" style="margin:12px 0 0"><button class="btn" id="dOk">Salvar</button><button class="btn sm" id="dNo">Cancelar</button></div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])),f=v=>v==null?"—":Number(v).toFixed(2).replace(".",",");
+const sb=supabase.createClient(CFG.url,CFG.key),NM={s10:"S-10",s500:"S-500",arla:"Arla"},PR=["s10","s500","arla"];
+let D=[],uf="",col=new Set();
+const hoje=t=>t&&new Date(t).toDateString()===new Date().toDateString(),hm=t=>new Date(t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),dm=t=>new Date(t).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}),pad=n=>String(n).padStart(2,"0"),dk=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()),br=s=>s.split("-").reverse().join("/");
+const lnk=d=>location.origin+"/posto.html?t="+d.resp.token;
+const wa=(d,msg)=>{let t=(d.resp.telefone||"").replace(/\D/g,"");if(!t)return"";if(!(t.startsWith("55")&&t.length>=12))t="55"+t;return `https://wa.me/${t}?text=${encodeURIComponent(msg)}`};
+const msg=d=>`Bom dia! Pode informar os preços de hoje pelo seu link exclusivo? ${lnk(d)}`;
+
+/* LOGIN */
+async function iniciar(s){$("login").hidden=!!s;$("app").hidden=!s;if(s){$("usr").textContent=s.user.email;await carregar()}}
+sb.auth.getSession().then(({data})=>iniciar(data.session));
+$("go").onclick=async()=>{const {data,error}=await sb.auth.signInWithPassword({email:$("em").value.trim(),password:$("pw").value});if(error){$("lErr").textContent="E-mail ou senha incorretos.";return}iniciar(data.session)};
+$("pw").onkeydown=e=>{if(e.key==="Enter")$("go").click()};
+$("sair").onclick=async()=>{await sb.auth.signOut();location.reload()};
+document.querySelectorAll("aside button[data-v]").forEach(b=>b.onclick=()=>{document.querySelectorAll("aside button[data-v]").forEach(x=>x.removeAttribute("aria-current"));b.setAttribute("aria-current","true");["hoje","hist","cad"].forEach(v=>$("v-"+v).hidden=v!==b.dataset.v)});
+
+/* DADOS */
+async function carregar(){
+ const [a,b]=await Promise.all([sb.from("postos").select("*,responsaveis(nome,telefone,token)").eq("ativo",true).order("uf").order("nome"),sb.from("ultimo_preco").select("*")]);
+ if(a.error||b.error){alert("Erro ao carregar os dados: "+(a.error||b.error).message);return}
+ const m={};b.data.forEach(r=>{(m[r.posto_id]=m[r.posto_id]||{})[r.produto]=r});
+ D=a.data.map(p=>{const u=m[p.id]||{},ult=Object.values(u).map(x=>x.enviado_em).sort().pop();return {...p,u,ult,pend:!hoje(ult),resp:p.responsaveis||{}}});
+ window.UF=[...new Set(D.map(d=>d.uf||"—"))].sort();
+ $("nPend").textContent=D.filter(d=>d.pend).length;
+ kpis();chips();tabela();histInit();cad()}
+const val=(d,k)=>d.u[k]?Number(d.u[k].valor):null,vende=(d,k)=>(d.produtos||[]).includes(k);
+
+/* HOJE */
+function kpis(){const ok=D.filter(d=>!d.pend),m=k=>{const a=ok.filter(d=>val(d,k)!=null);if(!a.length)return `<b>—</b><span>Menor ${NM[k]}: sem dados hoje</span>`;const x=a.reduce((p,c)=>val(c,k)<val(p,k)?c:p);return `<b>R$ ${f(val(x,k))}</b><span>Menor ${NM[k]} · ${esc(x.nome)} (${esc(x.cidade)}-${x.uf||""})</span>`};
+ $("kpis").innerHTML=`<div class="kpi"><b>${ok.length} de ${D.length}</b><span>postos responderam hoje</span></div>`+PR.map(k=>`<div class="kpi">${m(k)}</div>`).join("")}
+function chips(){$("chips").innerHTML=`<button class="chip" data-u="" aria-pressed="${uf===""}">Todos<small>${D.length}</small></button>`+UF.map(u=>{const a=D.filter(d=>(d.uf||"—")===u),p=a.filter(d=>d.pend).length;return `<button class="chip" data-u="${u}" aria-pressed="${uf===u}">${u}<small>${a.length}</small>${p?`<i title="${p} aguardando">${p}</i>`:""}</button>`}).join("");
+ document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{uf=b.dataset.u;chips();tabela()})}
+const cel=(d,k,mn)=>{if(!vende(d,k)||val(d,k)==null)return "—";const v=val(d,k);return d.pend?`<span class="old" title="Preço do último envio">${f(v)}</span>`:(k==="s10"&&v===mn?`<span class="min" title="Menor S-10 do estado">${f(v)}</span>`:f(v))};
+function ultTxt(d){if(!d.ult)return `<span class="av">Nunca atualizou</span>`;if(hoje(d.ult))return "Hoje, "+hm(d.ult);const n=Math.floor((new Date(new Date().toDateString())-new Date(new Date(d.ult).toDateString()))/864e5);return `<span${n>=3?' class="av"':""}>${dm(d.ult)}, ${hm(d.ult)}</span> <span class="old">(há ${n} ${n>1?"dias":"dia"})</span>`}
+function linha(d,mn){const w=wa(d,msg(d));return `<tr><td>${esc(d.nome)}${d.observacao?` <span class="av" title="${esc(d.observacao)}">⚠</span>`:""}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td class="n">${cel(d,"s10",mn)}</td><td class="n">${cel(d,"s500")}</td><td class="n">${cel(d,"arla")}</td><td>${esc(d.prazo)||"—"}</td><td>${d.pend?`<span class="pill pend">Aguardando</span> ${w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Cobrar no WhatsApp</a>`:`<span class="av">sem telefone</span>`}`:`<span class="pill ok">Respondeu</span>`}</td><td>${ultTxt(d)}</td></tr>`}
+function tabela(){
+ const q=$("q").value.trim().toLowerCase(),o=$("ord").value,p=$("pend").checked;
+ const L=D.filter(d=>(!uf||(d.uf||"—")===uf)&&(!p||d.pend)&&(!q||(d.nome+" "+d.cidade+" "+d.uf+" "+(d.resp.nome||"")).toLowerCase().includes(q)));
+ let h=`<thead><tr><th>Posto</th><th>Cidade</th><th class="n">S-10</th><th class="n">S-500</th><th class="n">Arla</th><th>Prazo</th><th>Situação</th><th>Última atualização</th></tr></thead><tbody>`;
+ if(!L.length)h+=`<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--mut)">Nenhum posto encontrado.</td></tr>`;
+ else if(o==="ult")[...L].sort((a,b)=>(a.ult||"").localeCompare(b.ult||"")).forEach(d=>h+=linha(d,-1));
+ else if(o!=="uf")[...L].sort((a,b)=>(val(a,o)??99)-(val(b,o)??99)).forEach(d=>h+=linha(d,-1));
+ else UF.forEach(u=>{const g=L.filter(d=>(d.uf||"—")===u);if(!g.length)return;const r=g.filter(d=>!d.pend&&val(d,"s10")!=null),mn=r.length>1?Math.min(...r.map(d=>val(d,"s10"))):-1,c=col.has(u);
+  h+=`<tr class="g"><td colspan="8"><button data-g="${u}" aria-expanded="${!c}">${c?"▸":"▾"} ${u}<span>${g.length} postos · ${g.filter(d=>!d.pend).length} responderam${r.length?` · menor S-10 R$ ${f(Math.min(...r.map(d=>val(d,"s10"))))}`:""}</span></button></td></tr>`;
+  if(!c)g.forEach(d=>h+=linha(d,mn))});
+ $("tbl").innerHTML=h+"</tbody>";
+ document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{const u=b.dataset.g;col.has(u)?col.delete(u):col.add(u);tabela()})}
+["q","ord","pend"].forEach(i=>$(i).oninput=tabela);
+$("expAll").onclick=()=>{col.clear();tabela()};$("colAll").onclick=()=>{UF.forEach(u=>col.add(u));tabela()};
+
+/* HISTÓRICO (lê a tabela de preços) */
+function histInit(){const v=$("hP").value;$("hP").innerHTML=`<option value="">Escolha um posto</option>`+UF.map(u=>`<optgroup label="${u}">${D.filter(d=>(d.uf||"—")===u).map(d=>`<option value="${d.id}">${esc(d.nome)} · ${esc(d.cidade)}</option>`).join("")}</optgroup>`).join("");$("hP").value=v;
+ if(!$("hF").value){const t=new Date(),i=new Date();i.setDate(t.getDate()-13);$("hF").value=dk(t);$("hI").value=dk(i);$("hF").max=dk(t)}
+ ["hP","hC","hI","hF"].forEach(i=>$(i).onchange=histDraw)}
+async function histDraw(){
+ const id=$("hP").value,c=$("hC").value,a=$("hI").value,b=$("hF").value,E=$("hErr"),R=$("hRes"),er=m=>{E.textContent=m;R.innerHTML=""};
+ if(!id)return er("Escolha um posto.");if(!a||!b)return er("Escolha as duas datas.");if(a>b)return er("A data inicial precisa ser anterior à final.");
+ const ini=new Date(a+"T00:00:00"),fim=new Date(b+"T23:59:59");if((fim-ini)/864e5>120)return er("Escolha um período de até 120 dias.");E.textContent="";
+ const [r1,r0]=await Promise.all([sb.from("precos").select("valor,enviado_em").eq("posto_id",id).eq("produto",c).gte("enviado_em",ini.toISOString()).lte("enviado_em",fim.toISOString()).order("enviado_em"),sb.from("precos").select("valor").eq("posto_id",id).eq("produto",c).lt("enviado_em",ini.toISOString()).order("enviado_em",{ascending:false}).limit(1)]);
+ if(r1.error)return er("Erro: "+r1.error.message);
+ const by={};r1.data.forEach(r=>by[dk(new Date(r.enviado_em))]=Number(r.valor));
+ let last=r0.data&&r0.data[0]?Number(r0.data[0].valor):null;const rows=[];
+ for(const d=new Date(ini);d<=fim;d.setDate(d.getDate()+1)){const k=dk(d);if(by[k]!=null){last=by[k];rows.push([k,last,false])}else if(last!=null)rows.push([k,last,true])}
+ if(!rows.length)return er("Não há preços de "+NM[c]+" para este posto no período.");
+ const v=rows.map(r=>r[1]),mn=Math.min(...v),mx=Math.max(...v),md=v.reduce((x,y)=>x+y,0)/v.length,N=rows.length,cor=c==="arla"?"var(--lin)":"var(--roxo)",p=D.find(d=>d.id===id);
+ let t=`<thead><tr><th>Data</th><th class="n">Preço (R$/L)</th><th class="n">Variação no dia</th></tr></thead><tbody>`;
+ for(let k=N-1;k>=0;k--){const x=k?rows[k][1]-rows[k-1][1]:null;t+=`<tr><td>${br(rows[k][0])}</td><td class="n">${rows[k][2]?`<span class="old" title="Sem envio neste dia: vale o último preço">${f(rows[k][1])}</span>`:f(rows[k][1])}</td><td class="n">${rows[k][2]?'<span class="old">sem envio</span>':x==null||Math.abs(x)<.005?"sem mudança":(x>0?"▲ ":"▼ ")+f(Math.abs(x))}</td></tr>`}
+ const W=640,H=240,L=44,Rt=12,T=12,B=28,lo=mn-.05,hi=mx+.05,X=k=>L+(N>1?k*(W-L-Rt)/(N-1):(W-L-Rt)/2),Y=y=>T+(hi-y)*(H-T-B)/(hi-lo);let g="";
+ for(let q=0;q<5;q++){const y=lo+(hi-lo)*q/4;g+=`<line x1="${L}" x2="${W-Rt}" y1="${Y(y)}" y2="${Y(y)}" stroke="var(--bd)"/><text x="${L-6}" y="${Y(y)+4}" text-anchor="end">${f(y)}</text>`}
+ g+=`<text x="${L}" y="${H-8}">${br(rows[0][0])}</text><text x="${W-Rt}" y="${H-8}" text-anchor="end">${br(rows[N-1][0])}</text>`;
+ if(N>1)g+=`<polyline fill="none" stroke="${cor}" stroke-width="3" stroke-linejoin="round" points="${rows.map((r,k)=>X(k)+","+Y(r[1])).join(" ")}"/>`;
+ if(N<=31)g+=rows.map((r,k)=>`<circle cx="${X(k)}" cy="${Y(r[1])}" r="4" fill="${cor}"/>`).join("");
+ R.innerHTML=`<h3 style="margin:6px 0 2px">${esc(p.nome)} · ${esc(p.cidade)} · ${NM[c]}</h3><p class="nota" style="margin:0 0 8px">${br(rows[0][0])} a ${br(rows[N-1][0])}</p><div class="resumo"><span>Menor: <b>R$ ${f(mn)}</b></span><span>Maior: <b>R$ ${f(mx)}</b></span><span>Média: <b>R$ ${f(md)}</b></span></div><div class="scroll rolar"><table>${t}</tbody></table></div><div class="card"><svg viewBox="0 0 640 240" width="100%" role="img" aria-label="Gráfico do preço no período">${g}</svg></div>`}
+
+/* POSTOS (cadastro e personalização da tela) */
+function cad(){const q=$("qc").value.trim().toLowerCase();
+ $("tcad").innerHTML=`<thead><tr><th>Posto</th><th>Cidade</th><th>Responsável</th><th>Combustíveis</th><th>Ações</th></tr></thead><tbody>`+D.filter(d=>!q||(d.nome+" "+d.cidade+" "+d.uf+" "+(d.resp.nome||"")).toLowerCase().includes(q)).map(d=>{const w=wa(d,msg(d)),ex=(d.config_tela?.extras||[]).length;return `<tr><td>${esc(d.nome)}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td>${esc(d.resp.nome)||"—"}</td><td>${(d.produtos||[]).map(k=>NM[k]).join(", ")}${ex?` · +${ex} extra${ex>1?"s":""}`:""}</td><td><button class="btn sm" data-c="${d.id}">Copiar link</button> ${w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Enviar link</a>`:""} <button class="btn sm" data-e="${d.id}">Personalizar tela</button></td></tr>`}).join("")+"</tbody>";
+ document.querySelectorAll("[data-c]").forEach(b=>b.onclick=async()=>{const d=D.find(x=>x.id===b.dataset.c);try{await navigator.clipboard.writeText(lnk(d));b.textContent="Copiado!"}catch{prompt("Copie o link:",lnk(d))}});
+ document.querySelectorAll("[data-e]").forEach(b=>b.onclick=()=>abrir(D.find(x=>x.id===b.dataset.e)))}
+$("qc").oninput=cad;
+let cur=null;
+function abrir(d){cur=d;$("dT").textContent=d.nome+" · "+d.cidade;$("dP").innerHTML=PR.map(k=>`<label class="ck"><input type="checkbox" value="${k}" ${vende(d,k)?"checked":""}> ${NM[k]}</label>`).join("");$("dObs").checked=!!d.config_tela?.observacao;$("dEx").value=(d.config_tela?.extras||[]).map(e=>e.label).join("\n");$("dlg").showModal()}
+$("dNo").onclick=()=>$("dlg").close();
+$("dOk").onclick=async()=>{const pr=[...$("dP").querySelectorAll("input:checked")].map(i=>i.value);if(!pr.length){alert("Marque pelo menos um combustível.");return}
+ const ex=$("dEx").value.split("\n").map(s=>s.trim()).filter(Boolean).map(l=>({id:l.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"_"),label:l}));
+ const cfg={...(cur.config_tela||{}),observacao:$("dObs").checked,extras:ex};
+ const {error}=await sb.from("postos").update({produtos:pr,config_tela:cfg}).eq("id",cur.id);if(error){alert("Erro ao salvar: "+error.message);return}
+ $("dlg").close();await carregar()};
+</script>
+</body>
+</html>
