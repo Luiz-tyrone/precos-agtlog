@@ -105,12 +105,13 @@ dialog{border:1px solid var(--bd);border-radius:12px;background:var(--surf);colo
  <p class="erro" id="hErr" role="alert"></p><div id="hRes"></div>
 </section>
 <section id="v-cad" hidden>
- <div class="bar"><input type="search" id="qc" placeholder="Buscar posto, cidade ou responsável" aria-label="Buscar no cadastro"></div>
+ <div class="bar"><input type="search" id="qc" placeholder="Buscar posto, cidade ou responsável" aria-label="Buscar no cadastro"><label><input type="checkbox" id="inat"> Mostrar inativos</label><button class="btn" id="novoR">+ Novo responsável</button></div>
  <p class="nota" id="cadN"></p>
  <div class="scroll"><table id="tcad"></table></div>
 </section>
 </main></div>
 
+<dialog id="dlg2"><h3 style="margin-top:0" id="d2T"></h3><div id="d2B"></div><p class="erro" id="d2E" role="alert"></p><div class="bar" style="margin:12px 0 0"><button class="btn" id="d2Ok">Salvar</button><button class="btn sm" id="d2No">Cancelar</button></div></dialog>
 <dialog id="dlg">
  <h3 style="margin-top:0" id="dT"></h3>
  <p class="fl">Combustíveis que este posto informa</p>
@@ -126,7 +127,7 @@ dialog{border:1px solid var(--bd);border-radius:12px;background:var(--surf);colo
 <script>
 const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])),f=v=>v==null?"—":Number(v).toFixed(2).replace(".",",");
 const sb=supabase.createClient(CFG.url,CFG.key),NM={s10:"S-10",s500:"S-500",arla:"Arla"},PR=["s10","s500","arla"];
-let D=[],uf="",col=new Set();
+let D=[],A=[],RS=[],uf="",col=new Set();
 const hoje=t=>t&&new Date(t).toDateString()===new Date().toDateString(),hm=t=>new Date(t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),dm=t=>new Date(t).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}),pad=n=>String(n).padStart(2,"0"),dk=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()),br=s=>s.split("-").reverse().join("/");
 const lnk=d=>location.origin+"/posto.html?t="+d.resp.token;
 const wa=(d,msg)=>{let t=(d.resp.telefone||"").replace(/\D/g,"");if(!t)return"";if(!(t.startsWith("55")&&t.length>=12))t="55"+t;return `https://wa.me/${t}?text=${encodeURIComponent(msg)}`};
@@ -142,10 +143,10 @@ document.querySelectorAll("aside button[data-v]").forEach(b=>b.onclick=()=>{docu
 
 /* DADOS */
 async function carregar(){
- const [a,b]=await Promise.all([sb.from("postos").select("*,responsaveis(nome,telefone,token)").eq("ativo",true).order("uf").order("nome"),sb.from("ultimo_preco").select("*")]);
- if(a.error||b.error){alert("Erro ao carregar os dados: "+(a.error||b.error).message);return}
+ const [a,b,rr]=await Promise.all([sb.from("postos").select("*,responsaveis(nome,telefone,token,ativo)").order("uf").order("nome"),sb.from("ultimo_preco").select("*"),sb.from("responsaveis").select("*").order("nome")]);
+ if(a.error||b.error||rr.error){alert("Erro ao carregar os dados: "+(a.error||b.error||rr.error).message);return}
  const m={};b.data.forEach(r=>{(m[r.posto_id]=m[r.posto_id]||{})[r.produto]=r});
- D=a.data.map(p=>{const u=m[p.id]||{},ult=Object.values(u).map(x=>x.enviado_em).sort().pop();return {...p,u,ult,pend:!hoje(ult),resp:p.responsaveis||{}}});
+ A=a.data.map(p=>{const u=m[p.id]||{},ult=Object.values(u).map(x=>x.enviado_em).sort().pop();return {...p,u,ult,pend:!hoje(ult),resp:p.responsaveis||{}}});RS=rr.data;D=A.filter(p=>p.ativo&&p.resp.ativo!==false);
  window.UF=[...new Set(D.map(d=>d.uf||"—"))].sort();
  $("nPend").textContent=D.filter(d=>d.pend).length;
  kpis();chips();tabela();histInit();cad()}
@@ -199,19 +200,36 @@ async function histDraw(){
  R.innerHTML=`<h3 style="margin:6px 0 2px">${esc(p.nome)} · ${esc(p.cidade)} · ${NM[c]}</h3><p class="nota" style="margin:0 0 8px">${br(rows[0][0])} a ${br(rows[N-1][0])}</p><div class="resumo"><span>Menor: <b>R$ ${f(mn)}</b></span><span>Maior: <b>R$ ${f(mx)}</b></span><span>Média: <b>R$ ${f(md)}</b></span></div><div class="scroll rolar"><table>${t}</tbody></table></div><div class="card"><svg viewBox="0 0 640 240" width="100%" role="img" aria-label="Gráfico do preço no período">${g}</svg></div>`}
 
 /* POSTOS (cadastro e personalização da tela) */
-function cad(){const q=$("qc").value.trim().toLowerCase();
- const L=D.filter(d=>!q||(d.nome+" "+d.cidade+" "+d.uf+" "+(d.resp.nome||"")).toLowerCase().includes(q));
- const G={};L.forEach(d=>{(G[d.responsavel_id]=G[d.responsavel_id]||{r:d.resp,u:[]}).u.push(d)});
- const gs=Object.entries(G).sort((x,y)=>(x[1].r.nome||"").localeCompare(y[1].r.nome||""));
- $("cadN").textContent=gs.length+" responsáveis · "+L.length+" postos. Cada responsável tem um link só, que vale para todas as suas unidades.";
+const UFL="AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" "),dig=s=>(s||"").replace(/\D/g,"");
+function cad(){const q=$("qc").value.trim().toLowerCase(),ina=$("inat").checked;
+ const gs=RS.filter(r=>ina||r.ativo!==false).map(r=>({r,u:A.filter(p=>p.responsavel_id===r.id&&(ina||p.ativo))})).filter(g=>!q||((g.r.nome||"")+" "+(g.r.telefone||"")).toLowerCase().includes(q)||g.u.some(p=>(p.nome+" "+p.cidade+" "+p.uf).toLowerCase().includes(q)));
+ $("cadN").textContent=gs.length+" responsáveis · "+gs.reduce((n,g)=>n+g.u.length,0)+" postos. Cada responsável tem um link só, que vale para todas as suas unidades.";
  let h=`<thead><tr><th>Responsável / Posto</th><th>Cidade</th><th>Combustíveis</th><th>Ações</th></tr></thead><tbody>`;
  if(!gs.length)h+=`<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--mut)">Nenhum resultado.</td></tr>`;
- gs.forEach(([id,g])=>{const d0=g.u[0],w=wa(d0,msg(d0)),tel=(g.r.telefone||"").replace(/\D/g,"");
-  h+=`<tr class="rg"><td colspan="4"><div class="rw"><b>${esc(g.r.nome)||"Sem nome"} <span class="old" style="font-weight:400">· ${g.u.length} ${g.u.length>1?"unidades":"unidade"}${tel?" · "+esc(tel):""}</span></b><button class="btn sm" data-c="${id}">Copiar link do responsável</button> ${w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Enviar link no WhatsApp</a>`:`<span class="av">sem telefone</span>`}</div></td></tr>`;
-  g.u.forEach(d=>{const ex=(d.config_tela?.extras||[]).length;h+=`<tr><td style="padding-left:28px">${esc(d.nome)}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td>${(d.produtos||[]).map(k=>NM[k]).join(", ")}${ex?` · +${ex} extra${ex>1?"s":""}`:""}</td><td><button class="btn sm" data-e="${d.id}">Personalizar tela</button></td></tr>`})});
+ gs.forEach(({r,u})=>{const x={resp:r},w=wa(x,msg(x)),tel=dig(r.telefone),off=r.ativo===false;
+  h+=`<tr class="rg"><td colspan="4"><div class="rw"><b>${esc(r.nome)||"Sem nome"} ${off?'<span class="pill pend">Inativo</span> ':""}<span class="old" style="font-weight:400">· ${u.length} ${u.length===1?"unidade":"unidades"}${tel?" · "+esc(tel):""}</span></b><button class="btn sm" data-c="${r.id}">Copiar link</button> ${w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Enviar no WhatsApp</a>`:`<span class="av">sem telefone</span>`} <button class="btn sm" data-er="${r.id}">Editar responsável</button> <button class="btn sm" data-np="${r.id}">+ Novo posto</button></div></td></tr>`;
+  if(!u.length)h+=`<tr><td colspan="4" style="padding-left:28px;color:var(--mut)">Nenhum posto ainda. Use "+ Novo posto".</td></tr>`;
+  u.forEach(d=>{const ex=(d.config_tela?.extras||[]).length;h+=`<tr${d.ativo?"":' style="opacity:.6"'}><td style="padding-left:28px">${esc(d.nome)} ${d.ativo?"":'<span class="pill pend">Inativo</span>'}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td>${(d.produtos||[]).map(k=>NM[k]).join(", ")}${ex?` · +${ex} extra${ex>1?"s":""}`:""}</td><td><button class="btn sm" data-ep="${d.id}">Editar cadastro</button> <button class="btn sm" data-e="${d.id}">Personalizar tela</button></td></tr>`})});
  $("tcad").innerHTML=h+"</tbody>";
- document.querySelectorAll("[data-c]").forEach(b=>b.onclick=async()=>{const d=D.find(x=>x.responsavel_id===b.dataset.c);try{await navigator.clipboard.writeText(lnk(d));b.textContent="Link copiado!"}catch{prompt("Copie o link:",lnk(d))}});
- document.querySelectorAll("[data-e]").forEach(b=>b.onclick=()=>abrir(D.find(x=>x.id===b.dataset.e)))}
+ const on=(s,fn)=>document.querySelectorAll(s).forEach(b=>b.onclick=()=>fn(b));
+ on("[data-c]",async b=>{const r=RS.find(x=>x.id===b.dataset.c),l=location.origin+"/posto.html?t="+r.token;try{await navigator.clipboard.writeText(l);b.textContent="Link copiado!"}catch{prompt("Copie o link:",l)}});
+ on("[data-er]",b=>edResp(RS.find(x=>x.id===b.dataset.er)));on("[data-np]",b=>edPosto(null,b.dataset.np));
+ on("[data-ep]",b=>edPosto(A.find(x=>x.id===b.dataset.ep)));on("[data-e]",b=>abrir(A.find(x=>x.id===b.dataset.e)))}
+function fm(tit,cs,v,salvar){$("d2T").textContent=tit;
+ $("d2B").innerHTML=cs.map(c=>c.t==="check"?`<label class="ck"><input type="checkbox" id="f_${c.k}" ${v[c.k]?"checked":""}> ${c.l}</label>`:c.t==="select"?`<label class="fl" for="f_${c.k}" style="margin-top:10px">${c.l}</label><select id="f_${c.k}" style="width:100%">${c.o.map(([a,b])=>`<option value="${esc(a)}" ${a===v[c.k]?"selected":""}>${esc(b)}</option>`).join("")}</select>`:`<label class="fl" for="f_${c.k}" style="margin-top:10px">${c.l}</label><input id="f_${c.k}" value="${esc(v[c.k]??"")}" placeholder="${c.ph||""}" style="width:100%" autocomplete="off">`).join("");
+ $("d2E").textContent="";
+ $("d2Ok").onclick=async()=>{const o={};cs.forEach(c=>{const e=$("f_"+c.k);o[c.k]=c.t==="check"?e.checked:e.value.trim()});const m=await salvar(o);if(m){$("d2E").textContent=m;return}$("dlg2").close();await carregar()};
+ $("dlg2").showModal()}
+$("d2No").onclick=()=>$("dlg2").close();
+function edResp(r){const n=!r;fm(n?"Novo responsável":"Editar responsável",[{k:"nome",l:"Nome do responsável"},{k:"telefone",l:"WhatsApp com DDD (só números)",ph:"62999999999"},...(n?[]:[{k:"ativo",t:"check",l:"Ativo (o link só funciona se estiver ativo)"}])],n?{}:{...r},async o=>{
+ const tel=dig(o.telefone);if(!o.nome)return "Informe o nome do responsável.";if(tel&&tel.length<10)return "Informe o telefone com DDD, por exemplo 62999999999.";
+ const d={nome:o.nome,telefone:tel||null};if(!n)d.ativo=o.ativo;
+ const {error}=n?await sb.from("responsaveis").insert(d):await sb.from("responsaveis").update(d).eq("id",r.id);return error?"Erro ao salvar: "+error.message:null})}
+function edPosto(p,rid){const n=!p;fm(n?"Novo posto":"Editar posto",[{k:"nome",l:"Nome do posto"},{k:"cidade",l:"Cidade"},{k:"uf",t:"select",l:"Estado (UF)",o:[["","—"],...UFL.map(u=>[u,u])]},{k:"cnpj",l:"CNPJ (opcional)"},{k:"cod_sistema",l:"Código no sistema (opcional)"},{k:"prazo",l:"Prazo de pagamento (opcional)"},{k:"responsavel_id",t:"select",l:"Responsável (troque para mover o posto)",o:RS.map(r=>[r.id,r.nome])},{k:"lancado",t:"check",l:"Já lançado no sistema"},...(n?[]:[{k:"ativo",t:"check",l:"Ativo (desmarque para tirar das listas, sem apagar o histórico)"}])],n?{responsavel_id:rid,uf:"",lancado:false}:{...p,uf:p.uf||""},async o=>{
+ if(!o.nome)return "Informe o nome do posto.";
+ const d={nome:o.nome,cidade:o.cidade||null,uf:o.uf||null,cnpj:o.cnpj||null,cod_sistema:o.cod_sistema||null,prazo:o.prazo||null,responsavel_id:o.responsavel_id,lancado:o.lancado};if(!n)d.ativo=o.ativo;
+ const {error}=n?await sb.from("postos").insert(d):await sb.from("postos").update(d).eq("id",p.id);return error?"Erro ao salvar: "+error.message:null})}
+$("novoR").onclick=()=>edResp(null);$("inat").onchange=cad;
 $("qc").oninput=cad;
 let cur=null;
 function abrir(d){cur=d;$("dT").textContent=d.nome+" · "+d.cidade;$("dP").innerHTML=PR.map(k=>`<label class="ck"><input type="checkbox" value="${k}" ${vende(d,k)?"checked":""}> ${NM[k]}</label>`).join("");$("dObs").checked=!!d.config_tela?.observacao;$("dEx").value=(d.config_tela?.extras||[]).map(e=>e.label).join("\n");$("dlg").showModal()}
