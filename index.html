@@ -530,6 +530,32 @@ async function histDraw(){
  g+=`<text x="${L}" y="${H-8}">${br(rows[0][0])}</text><text x="${W-Rt}" y="${H-8}" text-anchor="end">${br(rows[N-1][0])}</text>`;
  if(N>1)g+=`<polyline fill="none" stroke="${cor}" stroke-width="3" stroke-linejoin="round" points="${rows.map((r,k)=>X(k)+","+Y(r[1])).join(" ")}"/>`;
  if(N<=31)g+=rows.map((r,k)=>`<circle cx="${X(k)}" cy="${Y(r[1])}" r="4" fill="${cor}"/>`).join("");
+ const pontosLegenda=[];
+ for(let k=0;k<N;k++){
+   const prev=k>0?rows[k-1][1]:null;
+   const curr=rows[k][1];
+   const mudouAntes=prev!=null&&Math.abs(curr-prev)>=.005;
+   if(k===0||mudouAntes||k===N-1)pontosLegenda.push(k);
+ }
+ const unicos=[...new Set(pontosLegenda)];
+ g+=unicos.map((k,i)=>{
+   const curr=rows[k][1],prev=k>0?rows[k-1][1]:curr;
+   const x=X(k),y=Y(curr);
+   const subiu=curr>prev+.004,desceu=curr<prev-.004;
+   const texto=`${br(rows[k][0]).slice(0,5)} · R$ ${f(curr)}`;
+   const w=Math.max(82,texto.length*5.8+12),h=18;
+   const bx=Math.max(4,Math.min(W-w-4,x-w/2));
+   let by=subiu?y-28:(desceu?y+10:y-28);
+   by=Math.max(4,Math.min(H-h-22,by));
+   const corBorda=subiu?'var(--red)':(desceu?'var(--green)':'var(--border)');
+   const corTexto='var(--text)';
+   const lx=Math.max(bx+8,Math.min(bx+w-8,x));
+   const ly=by<y?by+h:y;
+   return `<line x1="${x}" y1="${y}" x2="${lx}" y2="${ly}" stroke="${corBorda}" stroke-width="1.2" opacity="0.9"/>`
+        +`<rect x="${bx}" y="${by}" width="${w}" height="${h}" rx="8" fill="var(--surface)" stroke="${corBorda}"/>`
+        +`<text x="${bx+w/2}" y="${by+12}" text-anchor="middle" style="font-size:10px;font-weight:700" fill="${corTexto}">${texto}</text>`
+        +`<circle cx="${x}" cy="${y}" r="4.5" fill="${cor}" stroke="var(--surface)" stroke-width="1.5"/>`;
+ }).join('');
  R.innerHTML=`<h3 style="margin:6px 0 2px">${esc(p.nome)} · ${esc(p.cidade)} · ${NM[c]}</h3><p class="nota" style="margin:0 0 8px">${br(rows[0][0])} a ${br(rows[N-1][0])}</p><div class="resumo"><span>Menor: <b>R$ ${f(mn)}</b></span><span>Maior: <b>R$ ${f(mx)}</b></span><span>Média: <b>R$ ${f(md)}</b></span></div><div class="scroll rolar"><table>${t}</tbody></table></div><div class="card"><svg viewBox="0 0 640 240" width="100%" role="img" aria-label="Gráfico do preço no período">${g}</svg></div>`}
 
 
