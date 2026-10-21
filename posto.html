@@ -27,7 +27,7 @@ main{max-width:850px;margin:0 auto;padding:24px 16px 110px}.card{background:tran
 .lock-dates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.lock-date{background:#fff;border:1px solid var(--border);border-radius:11px;padding:9px}.lock-date span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#8a818e;font-weight:800}.lock-date b{display:block;margin-top:2px;font-size:11px;color:#4e4553}
 .manual-note{display:flex;gap:8px;align-items:center;background:var(--green-bg);border:1px solid #cfeadb;color:var(--green);border-radius:11px;padding:9px 10px;font-size:11px;font-weight:750;margin-bottom:12px}.manual-note .dot{width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:11px;flex:0 0 auto}
 .status-summary{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:12px 13px;font-size:12px;color:var(--muted);flex:1}.status-summary b{color:var(--purple)}
-.footer{text-align:center;color:#a099a3;font-size:10px;padding:12px 0 0}
+.footer{text-align:center;color:#6f6873;font-size:13px;font-weight:650;padding:24px 0 4px}
 @media(max-width:650px){.lock-dates{grid-template-columns:1fr}.site-head{padding:9px 13px}.site-head img{width:92px;height:39px}.site-head-copy span{display:none}main{padding:15px 11px 104px}.welcome{padding:18px;border-radius:18px}.welcome h2{font-size:22px}.station-card{padding:14px;border-radius:17px}.price-grid{grid-template-columns:1fr}.price-field{display:grid;grid-template-columns:1fr minmax(130px,170px);column-gap:10px;align-items:center}.price-field label{margin:0}.price-input{grid-column:2;grid-row:1 / span 2}.last-price{grid-column:1;grid-row:2;margin:2px 0 0}.action-zone{bottom:max(8px,env(safe-area-inset-bottom));flex-direction:column}.btn{width:100%}}
 </style>
 </head>
@@ -35,7 +35,7 @@ main{max-width:850px;margin:0 auto;padding:24px 16px 110px}.card{background:tran
 <header class="site-head"><div class="site-head-inner"><img src="logo.png" alt="AGT-LOG Logística e Cargas"><div class="site-head-copy"><strong>Atualização semanal de preços</strong><span>Canal exclusivo para responsáveis de postos</span></div></div></header>
 <main>
  <div class="card" id="box"><div class="loading"><div class="loading-dot"></div><p>Carregando suas unidades…</p></div></div>
- <div class="footer">AGT-LOG · Controle de preços de combustível</div>
+ <div class="footer">Desenvolvido por Luiz Tyrone · Celular: 62985318950</div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -47,6 +47,21 @@ let T=null;
 const num=s=>{const n=parseFloat(String(s).replace(",","."));return isNaN(n)?null:n};
 const money=v=>v==null?"sem valor anterior":"R$ "+f(v);
 const dateTime=iso=>{if(!iso)return "—";const d=new Date(iso);return d.toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"})};
+function formatarPrecoAutomatico(el){
+ const digitos=String(el.value||"").replace(/\D/g,"");
+ if(!digitos){el.value="";return}
+ const base=digitos.padStart(3,"0");
+ const centavos=base.slice(-2);
+ const reais=(base.slice(0,-2).replace(/^0+(?=\d)/,"")||"0");
+ el.value=`${reais},${centavos}`;
+ try{el.setSelectionRange(el.value.length,el.value.length)}catch(_){}
+}
+function ativarMascarasPreco(){
+ document.querySelectorAll(".price-field input").forEach(el=>{
+  el.addEventListener("input",()=>formatarPrecoAutomatico(el));
+  el.addEventListener("focus",()=>{try{el.setSelectionRange(el.value.length,el.value.length)}catch(_){}});
+ });
+}
 async function iniciar(){
  if(!tk)return invalido();
  const {data,error}=await sb.rpc("carregar_tela",{p_token:tk});
@@ -57,7 +72,7 @@ async function iniciar(){
 function invalido(){$("box").innerHTML=`<div class="invalid"><div class="invalid-icon">!</div><h2>Link inválido</h2><p>Este link não está ativo. Peça um novo link à equipe da AGT-LOG.</p></div>`}
 function cardEditavel(p,j){
  const c=p.config||{};
- return `${p.liberado_manual?`<div class="manual-note"><span class="dot">✓</span><span>Edição liberada pela administração para correção deste envio.</span></div>`:""}<div class="price-grid">${(p.produtos||[]).map(k=>`<div class="price-field"><label for="u${j}${k}">${NM[k]}</label><div class="price-input"><span>R$</span><input id="u${j}${k}" inputmode="decimal" placeholder="0,00" autocomplete="off"></div><div class="last-price">Último informado: <b>${money(p.ultimos?.[k])}</b></div></div>`).join("")}</div>${c.observacao||(c.extras||[]).length?`<div class="extra-fields">${c.observacao?`<div><label class="fl" for="o${j}">Observação (opcional)</label><textarea id="o${j}" rows="2" placeholder="Digite uma observação, se necessário"></textarea></div>`:""}${(c.extras||[]).map((e,x)=>`<div><label class="fl" for="x${j}_${x}">${esc(e.label)}</label><input id="x${j}_${x}" autocomplete="off"></div>`).join("")}</div>`:""}`;
+ return `${p.liberado_manual?`<div class="manual-note"><span class="dot">✓</span><span>Edição liberada pela administração para correção deste envio.</span></div>`:""}<div class="price-grid">${(p.produtos||[]).map(k=>`<div class="price-field"><label for="u${j}${k}">${NM[k]}</label><div class="price-input"><span>R$</span><input id="u${j}${k}" inputmode="numeric" pattern="[0-9]*" placeholder="0,00" autocomplete="off"></div><div class="last-price">Último informado: <b>${money(p.ultimos?.[k])}</b></div></div>`).join("")}</div>${c.observacao||(c.extras||[]).length?`<div class="extra-fields">${c.observacao?`<div><label class="fl" for="o${j}">Observação (opcional)</label><textarea id="o${j}" rows="2" placeholder="Digite uma observação, se necessário"></textarea></div>`:""}${(c.extras||[]).map((e,x)=>`<div><label class="fl" for="x${j}_${x}">${esc(e.label)}</label><input id="x${j}_${x}" autocomplete="off"></div>`).join("")}</div>`:""}`;
 }
 function cardBloqueado(p,j){
  return `<div class="lock-panel"><div class="lock-icon">🔒</div><div class="lock-title">Preços desta semana já informados</div><div class="lock-copy">Esta unidade já respondeu ao ciclo semanal atual. A edição será liberada automaticamente na próxima segunda-feira às 08:00.</div><div class="lock-dates"><div class="lock-date"><span>Última atualização</span><b>${dateTime(p.ultima_atualizacao)}</b></div><div class="lock-date"><span>Próxima liberação</span><b>${dateTime(p.proxima_atualizacao)}</b></div></div></div>`;
@@ -66,6 +81,7 @@ function desenhar(){
  const editaveis=T.postos.filter(p=>p.pode_editar).length,bloqueados=T.postos.length-editaveis;
  $("box").innerHTML=`<section class="welcome"><div class="eyebrow">Atualização semanal de preços</div><h2>Olá, ${esc(T.responsavel)}</h2><p>${editaveis?"Preencha as unidades que ainda estão disponíveis neste ciclo semanal.":"Todas as suas unidades já enviaram os preços desta semana."}</p></section><div class="info-note"><span class="info-icon">i</span><div><b>Regra de atualização:</b> toda segunda-feira às 08:00 inicia um novo ciclo. O link permanece disponível até o posto enviar os preços; após o envio, aquela unidade fica bloqueada até a próxima segunda-feira às 08:00. Se houver erro, a administração pode liberar uma correção antecipada.</div></div><div class="units" id="us"></div><p class="erro" id="er" role="alert"></p>${editaveis?`<div class="action-zone"><div class="status-summary"><b>${editaveis}</b> ${editaveis===1?"unidade disponível":"unidades disponíveis"}${bloqueados?` · ${bloqueados} ${bloqueados===1?"já respondeu":"já responderam"}`:""}</div><button class="btn primary" id="env">Enviar preços disponíveis</button>${editaveis>1?`<button class="btn secondary" id="igual">Copiar valores da 1ª disponível</button>`:""}</div>`:`<div class="action-zone"><div class="status-summary"><b>Atualização semanal concluída.</b> As unidades serão liberadas automaticamente na próxima segunda-feira às 08:00.</div></div>`}`;
  $("us").innerHTML=T.postos.map((p,j)=>`<article class="station-card"><div class="station-top"><div><div class="station-name">${esc(p.nome)}</div><div class="station-place">${esc(p.cidade)}${p.uf?" · "+p.uf:""}</div></div><span class="station-chip">${p.pode_editar?(p.liberado_manual?"Correção liberada":"Disponível"):"Respondido na semana"}</span></div>${p.pode_editar?cardEditavel(p,j):cardBloqueado(p,j)}</article>`).join("");
+ ativarMascarasPreco();
  if($("env"))$("env").onclick=enviar;
  if($("igual"))$("igual").onclick=copiarPrimeiraDisponivel;
 }
