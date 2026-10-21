@@ -522,7 +522,7 @@ async function histDraw(){
  let last=r0.data&&r0.data[0]?Number(r0.data[0].valor):null;const rows=[];
  for(const d=new Date(ini);d<=fim;d.setDate(d.getDate()+1)){const k=dk(d);if(by[k]!=null){last=by[k];rows.push([k,last,false])}else if(last!=null)rows.push([k,last,true])}
  if(!rows.length)return er("Não há preços de "+NM[c]+" para este posto no período.");
- const v=rows.map(r=>r[1]),mn=Math.min(...v),mx=Math.max(...v),md=v.reduce((x,y)=>x+y,0)/v.length,N=rows.length,cor=c==="arla"?"var(--lin)":"var(--roxo)",p=D.find(d=>d.id===id);
+ const v=rows.map(r=>r[1]),mn=Math.min(...v),mx=Math.max(...v),md=v.reduce((x,y)=>x+y,0)/v.length,N=rows.length,cor=c==="arla"?"var(--line)":"var(--purple)",p=D.find(d=>d.id===id);
  let t=`<thead><tr><th>Data</th><th class="n">Preço (R$/L)</th><th class="n">Variação no dia</th></tr></thead><tbody>`;
  for(let k=N-1;k>=0;k--){const x=k?rows[k][1]-rows[k-1][1]:null,cls=x==null||Math.abs(x)<.005?"hist-equal":x>0?"hist-up":"hist-down",varTxt=x==null||Math.abs(x)<.005?"sem mudança":(x>0?"▲ ":"▼ ")+f(Math.abs(x));t+=`<tr><td>${br(rows[k][0])}</td><td class="n ${cls}">${f(rows[k][1])}</td><td class="n ${cls}">${varTxt}</td></tr>`}
  const W=640,H=240,L=44,Rt=12,T=12,B=28,lo=mn-.05,hi=mx+.05,X=k=>L+(N>1?k*(W-L-Rt)/(N-1):(W-L-Rt)/2),Y=y=>T+(hi-y)*(H-T-B)/(hi-lo);let g="";
