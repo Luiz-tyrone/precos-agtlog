@@ -37,7 +37,7 @@ aside{background:var(--surface);border-right:1px solid var(--border);padding:20p
 aside button{border:0;background:transparent;color:#554d5a;border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;text-align:left;font-weight:650;transition:.15s ease}
 aside button:hover{background:#f7f4f8;color:var(--purple)}aside button[aria-current=true]{background:var(--purple);color:#fff;box-shadow:0 7px 18px rgba(53,35,68,.15)}
 .nav-icon{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:#f1edf3;color:var(--purple);font-size:14px;font-weight:800;flex:0 0 auto}aside button[aria-current=true] .nav-icon{background:rgba(255,255,255,.13);color:var(--yellow)}
-aside button em{margin-left:auto;font-style:normal;font-size:11px;background:var(--amber-bg);color:var(--amber);border-radius:999px;padding:2px 7px;min-width:22px;text-align:center}aside hr{border:0;border-top:1px solid var(--border);width:100%;margin:9px 0}.logout{margin-top:auto!important;color:var(--muted)!important}.logout:hover{color:var(--red)!important;background:var(--red-bg)!important}
+aside button em{margin-left:auto;font-style:normal;font-size:11px;background:var(--amber-bg);color:var(--amber);border-radius:999px;padding:2px 7px;min-width:22px;text-align:center}aside button em.nav-alert{background:#d93b35;color:#fff;font-weight:900;box-shadow:0 0 0 3px rgba(217,59,53,.10)}aside button[aria-current=true] em.nav-alert{background:#fff;color:#b4231d;box-shadow:none}aside hr{border:0;border-top:1px solid var(--border);width:100%;margin:9px 0}.logout{margin-top:auto!important;color:var(--muted)!important}.logout:hover{color:var(--red)!important;background:var(--red-bg)!important}
 main{padding:28px 30px 44px;min-width:0;max-width:1680px;width:100%;margin:0 auto}
 .section-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin:0 0 20px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--purple);font-weight:800;margin-bottom:6px}.section-head h1{font-size:28px;letter-spacing:-.025em;line-height:1.1;margin:0}.section-head p{color:var(--muted);margin:7px 0 0;max-width:650px}.date-chip{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:12px;white-space:nowrap;box-shadow:var(--shadow-sm)}
 
@@ -65,6 +65,11 @@ input,select,textarea{border:1px solid var(--border-strong);background:var(--sur
 dialog{border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);max-width:490px;width:calc(100% - 30px);padding:22px;box-shadow:0 25px 70px rgba(0,0,0,.18)}dialog::backdrop{background:rgba(31,23,34,.5);backdrop-filter:blur(2px)}dialog h3{color:var(--purple);font-size:20px}textarea{width:100%}.ck{display:flex;gap:8px;align-items:center;margin:8px 0;color:#59515e}
 
 
+/* Avisos de aumento */
+.aviso-summary{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:11px;margin-bottom:14px}.aviso-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 17px;box-shadow:var(--shadow-sm)}.aviso-stat span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#8d8491;font-weight:800}.aviso-stat b{display:block;font-size:23px;margin-top:3px;color:var(--text)}
+.aviso-toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:14px;box-shadow:var(--shadow-sm)}.aviso-toolbar input[type=search]{flex:1;min-width:250px}.aviso-toolbar select{min-width:165px}.aviso-toolbar .btn{margin-left:auto}
+.aviso-lista{display:grid;gap:10px}.aviso-card{background:var(--surface);border:1px solid var(--border);border-radius:17px;padding:16px 17px;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:minmax(210px,1.25fr) minmax(250px,1fr) auto;gap:18px;align-items:center;position:relative;overflow:hidden}.aviso-card.novo{border-color:#f0c7c3;background:linear-gradient(90deg,#fff8f7 0,#fff 34%)}.aviso-card.novo:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#d93b35}.aviso-posto b{display:block;color:var(--purple);font-size:15px}.aviso-posto span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.aviso-produto{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--purple);background:var(--purple-soft);padding:5px 8px;border-radius:999px;margin-top:9px}.aviso-precos{display:flex;align-items:center;gap:11px;flex-wrap:wrap}.aviso-valor{min-width:86px}.aviso-valor small{display:block;color:var(--muted);font-size:10px;margin-bottom:2px}.aviso-valor strong{font-size:20px;font-variant-numeric:tabular-nums}.aviso-seta{font-size:19px;color:#a79fa9}.aviso-aumento{background:var(--red-bg);color:var(--red);border-radius:12px;padding:8px 10px;font-size:11px;font-weight:800;white-space:nowrap}.aviso-aumento strong{display:block;font-size:15px}.aviso-meta{text-align:right;min-width:150px}.aviso-novo{display:inline-flex;background:#d93b35;color:#fff;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900;letter-spacing:.04em;margin-bottom:7px}.aviso-lido{display:inline-flex;background:#f2eff4;color:#7a717e;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;margin-bottom:7px}.aviso-meta time{display:block;color:var(--muted);font-size:10px;margin-bottom:8px}.aviso-vazio{background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--radius);padding:42px 18px;text-align:center;color:var(--muted)}.aviso-vazio b{display:block;color:var(--purple);font-size:17px;margin-bottom:4px}
+
 /* Integração CFA */
 .cfa-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}.cfa-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}.cfa-card h3{margin:0 0 4px;color:var(--purple);font-size:17px}.cfa-card>p{margin:0 0 15px;color:var(--muted);font-size:12px}.cfa-dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cfa-dates input{width:100%}.cfa-mode{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.cfa-mode label{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--border);border-radius:12px;padding:11px;background:var(--surface-2);cursor:pointer}.cfa-mode input{margin-top:3px;accent-color:var(--purple)}.cfa-mode b{display:block;color:var(--purple);font-size:12px}.cfa-mode span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.cfa-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.cfa-stat{border:1px solid var(--border);border-radius:13px;padding:12px;background:var(--surface-2)}.cfa-stat span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:800}.cfa-stat b{display:block;color:var(--text);font-size:22px;margin-top:3px}.cfa-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.cfa-actions .btn{min-width:150px}.cfa-select-wrap{margin-top:14px}.cfa-select-head{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:9px}.cfa-select-head input{flex:1;min-width:240px}.cfa-list{border:1px solid var(--border);border-radius:14px;overflow:auto;max-height:360px;background:#fff}.cfa-row{display:grid;grid-template-columns:34px minmax(220px,1.5fr) minmax(120px,.7fr) minmax(170px,1fr);gap:10px;align-items:center;padding:10px 12px;border-top:1px solid #f0edf2}.cfa-row:first-child{border-top:0}.cfa-row:hover{background:#fcfbfd}.cfa-row input{accent-color:var(--purple)}.cfa-row .posto{font-weight:750;color:var(--text)}.cfa-row .sub{display:block;color:var(--muted);font-size:11px;font-weight:400}.cfa-products{display:flex;gap:7px;flex-wrap:wrap}.cfa-prod{display:inline-flex;flex-direction:column;gap:1px;background:var(--purple-soft);color:var(--purple);font-size:10px;font-weight:800;border-radius:11px;padding:5px 8px;line-height:1.25}.cfa-prod small{display:block;color:var(--muted);font-size:9px;font-weight:600;white-space:nowrap}.cfa-preview{white-space:pre-wrap;background:#1f1723;color:#f7f1fa;border-radius:14px;padding:14px;max-height:300px;overflow:auto;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;margin:10px 0 0}.cfa-empty{padding:28px 16px;text-align:center;color:var(--muted)}.cfa-note{background:#fff8e6;border:1px solid #f0d98c;color:#735000;border-radius:12px;padding:10px 12px;font-size:11px;margin-top:12px}.cfa-history{margin-top:16px}.cfa-history .scroll table{min-width:760px}.cfa-history td:last-child,.cfa-history th:last-child{text-align:right}.cfa-ok{color:var(--green);font-weight:750}.cfa-error{color:var(--red);font-size:12px;margin-top:8px;min-height:18px}
 
@@ -74,8 +79,8 @@ dialog{border:1px solid var(--border);border-radius:20px;background:var(--surfac
 @media(max-width:1180px){.kpis{grid-template-columns:repeat(3,1fr)}.filtros{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:820px){.topbar{height:66px;padding:0 14px}.brand img{width:96px;height:39px}.brand-copy span{display:none}.userbox{max-width:150px}.app{grid-template-columns:1fr}.app aside{position:sticky;top:66px;height:auto;z-index:25;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--border);padding:7px;background:rgba(255,255,255,.96);backdrop-filter:blur(8px)}.menu-title,aside hr,.logout .nav-label{display:none}.logout{margin-top:0!important;margin-left:auto!important}aside button{padding:8px 10px;white-space:nowrap}.nav-icon{width:25px;height:25px}.app main{padding:18px 13px 32px}.section-head{align-items:flex-start}.date-chip{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.filtros{grid-template-columns:1fr}.bar input[type=search]{min-width:100%;width:100%}.scroll{border-radius:14px}}
 
-@media(max-width:900px){.cfa-grid{grid-template-columns:1fr}.cfa-row{grid-template-columns:30px 1fr}.cfa-row .cfa-code,.cfa-row .cfa-products{grid-column:2}}
-@media(max-width:560px){.cfa-dates,.cfa-mode,.cfa-stats{grid-template-columns:1fr}.cfa-actions .btn{width:100%}.cfa-select-head input{min-width:100%}}
+@media(max-width:900px){.aviso-card{grid-template-columns:1fr 1fr}.aviso-meta{grid-column:1/-1;text-align:left;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.aviso-meta time{margin:0}.cfa-grid{grid-template-columns:1fr}.cfa-row{grid-template-columns:30px 1fr}.cfa-row .cfa-code,.cfa-row .cfa-products{grid-column:2}}
+@media(max-width:560px){.aviso-summary{grid-template-columns:1fr}.aviso-toolbar input[type=search],.aviso-toolbar select,.aviso-toolbar .btn{width:100%;min-width:100%;margin-left:0}.aviso-card{grid-template-columns:1fr;gap:12px}.aviso-meta{grid-column:auto}.cfa-dates,.cfa-mode,.cfa-stats{grid-template-columns:1fr}.cfa-actions .btn{width:100%}.cfa-select-head input{min-width:100%}}
 @media(max-width:500px){.brand-copy strong{font-size:13px}.userbox{display:none}.section-head h1{font-size:24px}.section-head p{font-size:13px}.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:14px;min-height:102px}.kpi b{font-size:21px}.kpi-price{grid-column:auto}.chips{overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}.chip{flex:0 0 auto}.toolbar-card{padding:11px}.btn{width:100%}.bar .btn.sm{width:auto}.resumo{grid-template-columns:1fr}}
 </style>
 </head>
@@ -110,6 +115,7 @@ dialog{border:1px solid var(--border);border-radius:20px;background:var(--surfac
     <button data-v="hoje" aria-current="true"><span class="nav-icon">▦</span><span class="nav-label">Painel</span><em id="nPend"></em></button>
     <button data-v="hist"><span class="nav-icon">↗</span><span class="nav-label">Histórico</span></button>
     <button data-v="cad"><span class="nav-icon">⌂</span><span class="nav-label">Postos</span></button>
+    <button data-v="avisos"><span class="nav-icon">!</span><span class="nav-label">Avisos</span><em id="nAvisos" class="nav-alert" hidden>0</em></button>
     <button data-v="cfa"><span class="nav-icon">⇩</span><span class="nav-label">Integração CFA</span></button>
     <hr>
     <button id="sair" class="logout"><span class="nav-icon">↪</span><span class="nav-label">Sair</span></button>
@@ -157,9 +163,43 @@ dialog{border:1px solid var(--border);border-radius:20px;background:var(--surfac
     </section>
 
 
+    <section id="v-avisos" hidden>
+      <div class="section-head">
+        <div><div class="eyebrow">Monitoramento</div><h1>Avisos de aumento de preço</h1><p>Veja os postos que aumentaram o preço em relação ao último valor informado no ciclo semanal anterior.</p></div>
+        <span class="date-chip">Comparação automática por produto</span>
+      </div>
+
+      <div class="aviso-summary">
+        <div class="aviso-stat"><span>Não visualizados</span><b id="avisoNaoLidos">0</b></div>
+        <div class="aviso-stat"><span>Avisos ativos</span><b id="avisoTotal">0</b></div>
+        <div class="aviso-stat"><span>Maior aumento</span><b id="avisoMaior">—</b></div>
+      </div>
+
+      <div class="aviso-toolbar">
+        <input type="search" id="avisoBusca" placeholder="Buscar posto, cidade ou UF..." aria-label="Buscar avisos">
+        <select id="avisoStatus" aria-label="Filtrar por visualização">
+          <option value="nao" selected>Não visualizados</option>
+          <option value="todos">Todos os avisos</option>
+          <option value="lidos">Visualizados</option>
+        </select>
+        <select id="avisoProduto" aria-label="Filtrar por produto">
+          <option value="">Todos os produtos</option>
+          <option value="s10">Diesel S-10</option>
+          <option value="s500">Diesel S-500</option>
+          <option value="arla">ARLA</option>
+        </select>
+        <button class="btn secondary" id="avisoMarcarTodos">Marcar todos como visualizados</button>
+      </div>
+
+      <p class="erro" id="avisoErr" role="alert"></p>
+      <div class="aviso-lista" id="avisoLista"></div>
+    </section>
+
+
     <section id="v-cfa" hidden>
       <div class="section-head">
         <div><div class="eyebrow">Integração</div><h1>Exportação CFA</h1><p>Gere o TXT somente com preços do ciclo atual que ainda não foram exportados. É possível exportar todos os pendentes ou selecionar postos específicos.</p></div>
+        <span class="date-chip">Formato: CODIGO_POSTO;DATA_INICIO;DATA_FIM;CODIGO_PRODUTO;VALOR</span>
       </div>
 
       <div class="cfa-grid">
@@ -253,7 +293,7 @@ sb.auth.getSession().then(({data})=>iniciar(data.session));
 $("go").onclick=async()=>{const {data,error}=await sb.auth.signInWithPassword({email:$("em").value.trim(),password:$("pw").value});if(error){$("lErr").textContent="E-mail ou senha incorretos.";return}iniciar(data.session)};
 $("pw").onkeydown=e=>{if(e.key==="Enter")$("go").click()};
 $("sair").onclick=async()=>{await sb.auth.signOut();location.reload()};
-document.querySelectorAll("aside button[data-v]").forEach(b=>b.onclick=async()=>{document.querySelectorAll("aside button[data-v]").forEach(x=>x.removeAttribute("aria-current"));b.setAttribute("aria-current","true");["hoje","hist","cad","cfa"].forEach(v=>$("v-"+v).hidden=v!==b.dataset.v);if(b.dataset.v==="cfa")await cfaCarregar()});
+document.querySelectorAll("aside button[data-v]").forEach(b=>b.onclick=async()=>{document.querySelectorAll("aside button[data-v]").forEach(x=>x.removeAttribute("aria-current"));b.setAttribute("aria-current","true");["hoje","hist","cad","avisos","cfa"].forEach(v=>$("v-"+v).hidden=v!==b.dataset.v);if(b.dataset.v==="avisos")await avisosCarregar();if(b.dataset.v==="cfa")await cfaCarregar()});
 
 /* DADOS */
 async function carregar(){
@@ -265,7 +305,7 @@ async function carregar(){
  A=a.data.map(p=>{const u=m[p.id]||{},ult=Object.values(u).map(x=>x.enviado_em).sort().pop();return {...p,u,ult,pend:!ult||new Date(ult)<CICLO_INICIO,resp:p.responsaveis||{}}});RS=rr.data;D=A.filter(p=>p.ativo&&p.resp.ativo!==false);
  window.UF=[...new Set(D.map(d=>d.uf||"—"))].sort();
  $("nPend").textContent=D.filter(d=>d.pend).length;
- kpis();chips();tabela();histInit();cad()}
+ kpis();chips();tabela();histInit();cad();avisosContador()}
 const val=(d,k)=>d.u[k]?Number(d.u[k].valor):null,vende=(d,k)=>(d.produtos||[]).includes(k);
 
 /* HOJE */
@@ -318,6 +358,45 @@ async function histDraw(){
  if(N>1)g+=`<polyline fill="none" stroke="${cor}" stroke-width="3" stroke-linejoin="round" points="${rows.map((r,k)=>X(k)+","+Y(r[1])).join(" ")}"/>`;
  if(N<=31)g+=rows.map((r,k)=>`<circle cx="${X(k)}" cy="${Y(r[1])}" r="4" fill="${cor}"/>`).join("");
  R.innerHTML=`<h3 style="margin:6px 0 2px">${esc(p.nome)} · ${esc(p.cidade)} · ${NM[c]}</h3><p class="nota" style="margin:0 0 8px">${br(rows[0][0])} a ${br(rows[N-1][0])}</p><div class="resumo"><span>Menor: <b>R$ ${f(mn)}</b></span><span>Maior: <b>R$ ${f(mx)}</b></span><span>Média: <b>R$ ${f(md)}</b></span></div><div class="scroll rolar"><table>${t}</tbody></table></div><div class="card"><svg viewBox="0 0 640 240" width="100%" role="img" aria-label="Gráfico do preço no período">${g}</svg></div>`}
+
+
+/* AVISOS DE AUMENTO */
+let AVISOS=[];
+const avisoData=s=>s?new Date(s).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}):"—";
+async function avisosContador(){
+ const {count,error}=await sb.from("avisos_precos_painel").select("id",{count:"exact",head:true}).eq("visualizado",false);
+ if(error){$("nAvisos").hidden=true;return}
+ const n=count||0;$("nAvisos").textContent=n>99?"99+":n;$("nAvisos").hidden=n===0;
+}
+function avisosResumo(){
+ const nao=AVISOS.filter(a=>!a.visualizado).length,total=AVISOS.length,maior=AVISOS.length?Math.max(...AVISOS.map(a=>Number(a.diferenca)||0)):null;
+ $("avisoNaoLidos").textContent=nao;$("avisoTotal").textContent=total;$("avisoMaior").textContent=maior==null?"—":"R$ "+f(maior);
+ $("avisoMarcarTodos").disabled=nao===0;
+}
+function avisosRender(){
+ const q=$("avisoBusca").value.trim().toLowerCase(),st=$("avisoStatus").value,pr=$("avisoProduto").value;
+ const L=AVISOS.filter(a=>{
+   if(st==="nao"&&a.visualizado)return false;if(st==="lidos"&&!a.visualizado)return false;if(pr&&a.produto!==pr)return false;
+   return !q||(`${a.posto||""} ${a.cidade||""} ${a.uf||""}`).toLowerCase().includes(q);
+ });
+ if(!L.length){$("avisoLista").innerHTML=`<div class="aviso-vazio"><b>Nenhum aviso encontrado</b><span>${st==="nao"?"Não há aumentos pendentes de visualização com estes filtros.":"Não há avisos para os filtros selecionados."}</span></div>`;return}
+ $("avisoLista").innerHTML=L.map(a=>`<article class="aviso-card ${a.visualizado?"":"novo"}">
+   <div class="aviso-posto"><b>${esc(a.posto)}</b><span>${esc(a.cidade||"")}${a.uf?" · "+esc(a.uf):""}</span><span class="aviso-produto">${esc(a.produto_nome||NM[a.produto]||a.produto)}</span></div>
+   <div class="aviso-precos"><div class="aviso-valor"><small>Semana passada</small><strong>R$ ${f(a.preco_anterior)}</strong></div><span class="aviso-seta">→</span><div class="aviso-valor"><small>Preço atual</small><strong>R$ ${f(a.preco_atual)}</strong></div><div class="aviso-aumento"><strong>▲ R$ ${f(a.diferenca)}</strong>+${f(a.percentual)}%</div></div>
+   <div class="aviso-meta">${a.visualizado?'<span class="aviso-lido">Visualizado</span>':'<span class="aviso-novo">NOVO</span>'}<time>Aviso gerado em ${avisoData(a.criado_em)}</time>${a.visualizado?'':`<button class="btn sm" data-aviso-lido="${a.id}">Marcar como visualizado</button>`}</div>
+ </article>`).join("");
+ document.querySelectorAll("[data-aviso-lido]").forEach(b=>b.onclick=async()=>{b.disabled=true;b.textContent="Marcando…";const {error}=await sb.rpc("marcar_aviso_visualizado",{p_aviso_id:Number(b.dataset.avisoLido)});if(error){$("avisoErr").textContent="Não foi possível marcar o aviso: "+error.message;b.disabled=false;b.textContent="Marcar como visualizado";return}$("avisoErr").textContent="";await avisosCarregar()});
+}
+async function avisosCarregar(){
+ const E=$("avisoErr");E.textContent="Carregando avisos…";
+ const {data,error}=await sb.from("avisos_precos_painel").select("*").order("atualizado_em",{ascending:false});
+ if(error){E.textContent="Erro ao carregar avisos: "+error.message;AVISOS=[];avisosResumo();avisosRender();return}
+ AVISOS=(data||[]).sort((a,b)=>Number(a.visualizado)-Number(b.visualizado)||new Date(b.criado_em)-new Date(a.criado_em));E.textContent="";avisosResumo();avisosRender();await avisosContador();
+}
+$("avisoBusca").oninput=avisosRender;$("avisoStatus").onchange=avisosRender;$("avisoProduto").onchange=avisosRender;
+$("avisoMarcarTodos").onclick=async()=>{if(!AVISOS.some(a=>!a.visualizado))return;if(!confirm("Marcar todos os avisos de aumento como visualizados?"))return;const b=$("avisoMarcarTodos"),txt=b.textContent;b.disabled=true;b.textContent="Marcando…";const {data,error}=await sb.rpc("marcar_todos_avisos_visualizados");b.textContent=txt;if(error){$("avisoErr").textContent="Não foi possível marcar os avisos: "+error.message;b.disabled=false;return}$("avisoErr").textContent=(data||0)+" aviso(s) marcado(s) como visualizado(s).";await avisosCarregar()};
+setInterval(()=>{if(!$('app').hidden)avisosContador()},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!$('app').hidden)avisosContador()});
 
 
 /* INTEGRAÇÃO CFA */
