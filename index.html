@@ -607,24 +607,60 @@ async function histDraw(){
    if(k===0||mudouAntes||k===N-1)pontosLegenda.push(k);
  }
  const unicos=[...new Set(pontosLegenda)];
- g+=unicos.map((k,i)=>{
+ const caixas=[];
+ const overlapArea=(a,b)=>{
+   const ox=Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x));
+   const oy=Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
+   return ox*oy;
+ };
+ const colide=(a,b,m=4)=>!(a.x+a.w+m<=b.x||b.x+b.w+m<=a.x||a.y+a.h+m<=b.y||b.y+b.h+m<=a.y);
+ const clampBox=(bx,by,w,h)=>({
+   x:Math.max(4,Math.min(W-w-4,bx)),
+   y:Math.max(4,Math.min(H-B-h-4,by)),w,h
+ });
+ const escolherCaixa=(x,y,w,h,preferirAcima)=>{
+   const gap=10;
+   const candidatos=preferirAcima?
+     [
+       [x-w/2,y-h-gap], [x-w/2,y+gap],
+       [x-w-gap,y-h-gap], [x+gap,y-h-gap],
+       [x-w-gap,y+gap], [x+gap,y+gap],
+       [x-w-gap,y-h/2], [x+gap,y-h/2]
+     ]:
+     [
+       [x-w/2,y+gap], [x-w/2,y-h-gap],
+       [x-w-gap,y+gap], [x+gap,y+gap],
+       [x-w-gap,y-h-gap], [x+gap,y-h-gap],
+       [x-w-gap,y-h/2], [x+gap,y-h/2]
+     ];
+   const boxes=candidatos.map(([bx,by])=>clampBox(bx,by,w,h));
+   const livre=boxes.find(b=>caixas.every(c=>!colide(b,c)));
+   if(livre)return livre;
+   let melhor=boxes[0],score=Infinity;
+   for(const b of boxes){
+     const s=caixas.reduce((acc,c)=>acc+overlapArea(b,c),0);
+     if(s<score){score=s;melhor=b}
+   }
+   return melhor;
+ };
+ for(const k of unicos){
    const curr=rows[k][1],prev=k>0?rows[k-1][1]:curr;
    const x=X(k),y=Y(curr);
    const subiu=curr>prev+.004,desceu=curr<prev-.004;
    const texto=`${br(rows[k][0]).slice(0,5)} · R$ ${f(curr)}`;
-   const w=Math.max(82,texto.length*5.8+12),h=18;
-   const bx=Math.max(4,Math.min(W-w-4,x-w/2));
-   let by=subiu?y-28:(desceu?y+10:y-28);
-   by=Math.max(4,Math.min(H-h-22,by));
+   const w=Math.max(82,texto.length*5.8+14),h=20;
+   const caixa=escolherCaixa(x,y,w,h,!desceu);
+   caixas.push(caixa);
+   const bx=caixa.x,by=caixa.y;
    const corBorda=subiu?'var(--red)':(desceu?'var(--green)':'var(--border)');
    const corTexto='var(--text)';
    const lx=Math.max(bx+8,Math.min(bx+w-8,x));
-   const ly=by<y?by+h:y;
-   return `<line x1="${x}" y1="${y}" x2="${lx}" y2="${ly}" stroke="${corBorda}" stroke-width="1.2" opacity="0.9"/>`
-        +`<rect x="${bx}" y="${by}" width="${w}" height="${h}" rx="8" fill="var(--surface)" stroke="${corBorda}"/>`
-        +`<text x="${bx+w/2}" y="${by+12}" text-anchor="middle" style="font-size:10px;font-weight:700" fill="${corTexto}">${texto}</text>`
-        +`<circle cx="${x}" cy="${y}" r="4.5" fill="${cor}" stroke="var(--surface)" stroke-width="1.5"/>`;
- }).join('');
+   const ly=y<by?by:(y>by+h?by+h:Math.max(by+4,Math.min(by+h-4,y)));
+   g+=`<line x1="${x}" y1="${y}" x2="${lx}" y2="${ly}" stroke="${corBorda}" stroke-width="1.2" opacity="0.9"/>`
+      +`<rect x="${bx}" y="${by}" width="${w}" height="${h}" rx="9" fill="var(--surface)" stroke="${corBorda}"/>`
+      +`<text x="${bx+w/2}" y="${by+13.2}" text-anchor="middle" style="font-size:10px;font-weight:700" fill="${corTexto}">${texto}</text>`
+      +`<circle cx="${x}" cy="${y}" r="4.5" fill="${cor}" stroke="var(--surface)" stroke-width="1.5"/>`;
+ }
  R.innerHTML=`<h3 style="margin:6px 0 2px">${esc(p.nome)} · ${esc(p.cidade)} · ${NM[c]}</h3><p class="nota" style="margin:0 0 8px">${br(rows[0][0])} a ${br(rows[N-1][0])}</p><div class="resumo"><span>Menor: <b>R$ ${f(mn)}</b></span><span>Maior: <b>R$ ${f(mx)}</b></span><span>Média: <b>R$ ${f(md)}</b></span></div><div class="scroll rolar"><table>${t}</tbody></table></div><div class="card"><svg viewBox="0 0 640 240" width="100%" role="img" aria-label="Gráfico do preço no período">${g}</svg></div>`}
 
 
