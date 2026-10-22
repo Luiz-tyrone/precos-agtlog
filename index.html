@@ -319,7 +319,7 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
 
     <section id="v-avisos" hidden>
       <div class="section-head">
-        <div><div class="eyebrow">Monitoramento</div><h1>Avisos de aumento de preço</h1><p>Veja os postos que aumentaram o preço em relação ao último valor informado no ciclo semanal anterior.</p></div>
+        <div><div class="eyebrow">Monitoramento</div><h1>Avisos de aumento de preço</h1><p>Veja os postos que aumentaram o preço em relação ao valor imediatamente anterior informado para o mesmo produto.</p></div>
         <span class="date-chip">Comparação automática por produto</span>
       </div>
 
@@ -585,84 +585,70 @@ async function histDraw(){
  const id=$("hP").value,c=$("hC").value,a=$("hI").value,b=$("hF").value,E=$("hErr"),R=$("hRes"),er=m=>{E.textContent=m;R.innerHTML=""};
  if(!id)return er("Escolha um posto.");if(!a||!b)return er("Escolha as duas datas.");if(a>b)return er("A data inicial precisa ser anterior à final.");
  const ini=new Date(a+"T00:00:00"),fim=new Date(b+"T23:59:59");if((fim-ini)/864e5>120)return er("Escolha um período de até 120 dias.");E.textContent="";
- const [r1,r0]=await Promise.all([sb.from("precos").select("valor,enviado_em").eq("posto_id",id).eq("produto",c).gte("enviado_em",ini.toISOString()).lte("enviado_em",fim.toISOString()).order("enviado_em"),sb.from("precos").select("valor").eq("posto_id",id).eq("produto",c).lt("enviado_em",ini.toISOString()).order("enviado_em",{ascending:false}).limit(1)]);
+ const [r1,r0]=await Promise.all([
+   sb.from("precos").select("id,valor,enviado_em").eq("posto_id",id).eq("produto",c).gte("enviado_em",ini.toISOString()).lte("enviado_em",fim.toISOString()).order("enviado_em",{ascending:true}).order("id",{ascending:true}),
+   sb.from("precos").select("id,valor,enviado_em").eq("posto_id",id).eq("produto",c).lt("enviado_em",ini.toISOString()).order("enviado_em",{ascending:false}).order("id",{ascending:false}).limit(1)
+ ]);
  if(r1.error)return er("Erro: "+r1.error.message);
- const by={};r1.data.forEach(r=>by[dk(new Date(r.enviado_em))]=Number(r.valor));
- let last=r0.data&&r0.data[0]?Number(r0.data[0].valor):null;const rows=[];
- for(const d=new Date(ini);d<=fim;d.setDate(d.getDate()+1)){const k=dk(d);if(by[k]!=null){last=by[k];rows.push([k,last,false])}else if(last!=null)rows.push([k,last,true])}
+ const partesSP=iso=>{
+   const ps=new Intl.DateTimeFormat("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date(iso));
+   const o={};ps.forEach(x=>o[x.type]=x.value);return {key:`${o.year}-${o.month}-${o.day}`,hora:`${o.hour}:${o.minute}`};
+ };
+ const eventos={};
+ (r1.data||[]).forEach(r=>{const z=partesSP(r.enviado_em);(eventos[z.key]=eventos[z.key]||[]).push({id:r.id,valor:Number(r.valor),enviado_em:r.enviado_em,hora:z.hora})});
+ let last=r0.data&&r0.data[0]?Number(r0.data[0].valor):null;
+ const rows=[];
+ for(const d=new Date(ini);d<=fim;d.setDate(d.getDate()+1)){
+   const k=dk(d),ev=eventos[k]||[];
+   if(ev.length){
+     ev.forEach(e=>{last=e.valor;rows.push({data:k,valor:last,sintetico:false,hora:e.hora,enviado_em:e.enviado_em,id:e.id})});
+   }else if(last!=null){
+     rows.push({data:k,valor:last,sintetico:true,hora:null,enviado_em:null,id:null});
+   }
+ }
  if(!rows.length)return er("Não há preços de "+NM[c]+" para este posto no período.");
- const v=rows.map(r=>r[1]),mn=Math.min(...v),mx=Math.max(...v),md=v.reduce((x,y)=>x+y,0)/v.length,N=rows.length,cor=c==="arla"?"var(--line)":"var(--purple)",p=D.find(d=>d.id===id);
- let t=`<thead><tr><th>Data</th><th class="n">Preço (R$/L)</th><th class="n">Variação no dia</th></tr></thead><tbody>`;
- for(let k=N-1;k>=0;k--){const x=k?rows[k][1]-rows[k-1][1]:null,cls=x==null||Math.abs(x)<.005?"hist-equal":x>0?"hist-up":"hist-down",varTxt=x==null||Math.abs(x)<.005?"sem mudança":(x>0?"▲ ":"▼ ")+f(Math.abs(x));t+=`<tr><td>${br(rows[k][0])}</td><td class="n ${cls}">${f(rows[k][1])}</td><td class="n ${cls}">${varTxt}</td></tr>`}
+ const v=rows.map(r=>r.valor),mn=Math.min(...v),mx=Math.max(...v),md=v.reduce((x,y)=>x+y,0)/v.length,N=rows.length,cor=c==="arla"?"var(--line)":"var(--purple)",p=D.find(d=>d.id===id);
+ let t=`<thead><tr><th>Data / hora</th><th class="n">Preço (R$/L)</th><th class="n">Variação</th></tr></thead><tbody>`;
+ for(let k=N-1;k>=0;k--){
+   const x=k?rows[k].valor-rows[k-1].valor:null;
+   const cls=x==null||Math.abs(x)<.005?"hist-equal":x>0?"hist-up":"hist-down";
+   const varTxt=x==null||Math.abs(x)<.005?"sem mudança":(x>0?"▲ ":"▼ ")+f(Math.abs(x));
+   const quando=br(rows[k].data)+(rows[k].sintetico?"":` <span class="old" style="font-size:11px">${rows[k].hora}</span>`);
+   t+=`<tr><td>${quando}</td><td class="n ${cls}">${f(rows[k].valor)}</td><td class="n ${cls}">${varTxt}</td></tr>`;
+ }
  const W=640,H=240,L=44,Rt=12,T=12,B=28,lo=mn-.05,hi=mx+.05,X=k=>L+(N>1?k*(W-L-Rt)/(N-1):(W-L-Rt)/2),Y=y=>T+(hi-y)*(H-T-B)/(hi-lo);let g="";
  for(let q=0;q<5;q++){const y=lo+(hi-lo)*q/4;g+=`<line x1="${L}" x2="${W-Rt}" y1="${Y(y)}" y2="${Y(y)}" stroke="var(--bd)"/><text x="${L-6}" y="${Y(y)+4}" text-anchor="end">${f(y)}</text>`}
- g+=`<text x="${L}" y="${H-8}">${br(rows[0][0])}</text><text x="${W-Rt}" y="${H-8}" text-anchor="end">${br(rows[N-1][0])}</text>`;
- if(N>1)g+=`<polyline fill="none" stroke="${cor}" stroke-width="3" stroke-linejoin="round" points="${rows.map((r,k)=>X(k)+","+Y(r[1])).join(" ")}"/>`;
- if(N<=31)g+=rows.map((r,k)=>`<circle cx="${X(k)}" cy="${Y(r[1])}" r="4" fill="${cor}"/>`).join("");
+ g+=`<text x="${L}" y="${H-8}">${br(rows[0].data)}</text><text x="${W-Rt}" y="${H-8}" text-anchor="end">${br(rows[N-1].data)}</text>`;
+ if(N>1)g+=`<polyline fill="none" stroke="${cor}" stroke-width="3" stroke-linejoin="round" points="${rows.map((r,k)=>X(k)+","+Y(r.valor)).join(" ")}"/>`;
+ if(N<=31)g+=rows.map((r,k)=>`<circle cx="${X(k)}" cy="${Y(r.valor)}" r="4" fill="${cor}"/>`).join("");
  const pontosLegenda=[];
  for(let k=0;k<N;k++){
-   const prev=k>0?rows[k-1][1]:null;
-   const curr=rows[k][1];
+   const prev=k>0?rows[k-1].valor:null;
+   const curr=rows[k].valor;
    const mudouAntes=prev!=null&&Math.abs(curr-prev)>=.005;
    if(k===0||mudouAntes||k===N-1)pontosLegenda.push(k);
  }
  const unicos=[...new Set(pontosLegenda)];
  const caixas=[];
- const overlapArea=(a,b)=>{
-   const ox=Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x));
-   const oy=Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
-   return ox*oy;
- };
+ const overlapArea=(a,b)=>{const ox=Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x));const oy=Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));return ox*oy};
  const colide=(a,b,m=4)=>!(a.x+a.w+m<=b.x||b.x+b.w+m<=a.x||a.y+a.h+m<=b.y||b.y+b.h+m<=a.y);
- const clampBox=(bx,by,w,h)=>({
-   x:Math.max(4,Math.min(W-w-4,bx)),
-   y:Math.max(4,Math.min(H-B-h-4,by)),w,h
- });
+ const clampBox=(bx,by,w,h)=>({x:Math.max(4,Math.min(W-w-4,bx)),y:Math.max(4,Math.min(H-B-h-4,by)),w,h});
  const escolherCaixa=(x,y,w,h,preferirAcima)=>{
    const gap=10;
-   const candidatos=preferirAcima?
-     [
-       [x-w/2,y-h-gap], [x-w/2,y+gap],
-       [x-w-gap,y-h-gap], [x+gap,y-h-gap],
-       [x-w-gap,y+gap], [x+gap,y+gap],
-       [x-w-gap,y-h/2], [x+gap,y-h/2]
-     ]:
-     [
-       [x-w/2,y+gap], [x-w/2,y-h-gap],
-       [x-w-gap,y+gap], [x+gap,y+gap],
-       [x-w-gap,y-h-gap], [x+gap,y-h-gap],
-       [x-w-gap,y-h/2], [x+gap,y-h/2]
-     ];
+   const candidatos=preferirAcima?[[x-w/2,y-h-gap],[x-w/2,y+gap],[x-w-gap,y-h-gap],[x+gap,y-h-gap],[x-w-gap,y+gap],[x+gap,y+gap],[x-w-gap,y-h/2],[x+gap,y-h/2]]:[[x-w/2,y+gap],[x-w/2,y-h-gap],[x-w-gap,y+gap],[x+gap,y+gap],[x-w-gap,y-h-gap],[x+gap,y-h-gap],[x-w-gap,y-h/2],[x+gap,y-h/2]];
    const boxes=candidatos.map(([bx,by])=>clampBox(bx,by,w,h));
-   const livre=boxes.find(b=>caixas.every(c=>!colide(b,c)));
-   if(livre)return livre;
-   let melhor=boxes[0],score=Infinity;
-   for(const b of boxes){
-     const s=caixas.reduce((acc,c)=>acc+overlapArea(b,c),0);
-     if(s<score){score=s;melhor=b}
-   }
-   return melhor;
+   const livre=boxes.find(b=>caixas.every(c=>!colide(b,c)));if(livre)return livre;
+   let melhor=boxes[0],score=Infinity;for(const b of boxes){const s=caixas.reduce((acc,c)=>acc+overlapArea(b,c),0);if(s<score){score=s;melhor=b}}return melhor;
  };
  for(const k of unicos){
-   const curr=rows[k][1],prev=k>0?rows[k-1][1]:curr;
-   const x=X(k),y=Y(curr);
-   const subiu=curr>prev+.004,desceu=curr<prev-.004;
-   const texto=`${br(rows[k][0]).slice(0,5)} · R$ ${f(curr)}`;
-   const w=Math.max(82,texto.length*5.8+14),h=20;
-   const caixa=escolherCaixa(x,y,w,h,!desceu);
-   caixas.push(caixa);
-   const bx=caixa.x,by=caixa.y;
-   const corBorda=subiu?'var(--red)':(desceu?'var(--green)':'var(--border)');
-   const corTexto='var(--text)';
-   const lx=Math.max(bx+8,Math.min(bx+w-8,x));
-   const ly=y<by?by:(y>by+h?by+h:Math.max(by+4,Math.min(by+h-4,y)));
-   g+=`<line x1="${x}" y1="${y}" x2="${lx}" y2="${ly}" stroke="${corBorda}" stroke-width="1.2" opacity="0.9"/>`
-      +`<rect x="${bx}" y="${by}" width="${w}" height="${h}" rx="9" fill="var(--surface)" stroke="${corBorda}"/>`
-      +`<text x="${bx+w/2}" y="${by+13.2}" text-anchor="middle" style="font-size:10px;font-weight:700" fill="${corTexto}">${texto}</text>`
-      +`<circle cx="${x}" cy="${y}" r="4.5" fill="${cor}" stroke="var(--surface)" stroke-width="1.5"/>`;
+   const curr=rows[k].valor,prev=k>0?rows[k-1].valor:curr,x=X(k),y=Y(curr),subiu=curr>prev+.004,desceu=curr<prev-.004;
+   const dataCurta=br(rows[k].data).slice(0,5)+(rows[k].sintetico?"":` ${rows[k].hora}`);
+   const texto=`${dataCurta} · R$ ${f(curr)}`,w=Math.max(82,texto.length*5.8+14),h=20,caixa=escolherCaixa(x,y,w,h,!desceu);caixas.push(caixa);
+   const bx=caixa.x,by=caixa.y,corBorda=subiu?'var(--red)':(desceu?'var(--green)':'var(--border)'),lx=Math.max(bx+8,Math.min(bx+w-8,x)),ly=y<by?by:(y>by+h?by+h:Math.max(by+4,Math.min(by+h-4,y)));
+   g+=`<line x1="${x}" y1="${y}" x2="${lx}" y2="${ly}" stroke="${corBorda}" stroke-width="1.2" opacity="0.9"/>`+`<rect x="${bx}" y="${by}" width="${w}" height="${h}" rx="9" fill="var(--surface)" stroke="${corBorda}"/>`+`<text x="${bx+w/2}" y="${by+13.2}" text-anchor="middle" style="font-size:10px;font-weight:700" fill="var(--text)">${texto}</text>`+`<circle cx="${x}" cy="${y}" r="4.5" fill="${cor}" stroke="var(--surface)" stroke-width="1.5"/>`;
  }
- R.innerHTML=`<h3 style="margin:6px 0 2px">${esc(p.nome)} · ${esc(p.cidade)} · ${NM[c]}</h3><p class="nota" style="margin:0 0 8px">${br(rows[0][0])} a ${br(rows[N-1][0])}</p><div class="resumo"><span>Menor: <b>R$ ${f(mn)}</b></span><span>Maior: <b>R$ ${f(mx)}</b></span><span>Média: <b>R$ ${f(md)}</b></span></div><div class="scroll rolar"><table>${t}</tbody></table></div><div class="card"><svg viewBox="0 0 640 240" width="100%" role="img" aria-label="Gráfico do preço no período">${g}</svg></div>`}
-
+ R.innerHTML=`<h3 style="margin:6px 0 2px">${esc(p.nome)} · ${esc(p.cidade)} · ${NM[c]}</h3><p class="nota" style="margin:0 0 8px">${br(rows[0].data)} a ${br(rows[N-1].data)}</p><div class="resumo"><span>Menor: <b>R$ ${f(mn)}</b></span><span>Maior: <b>R$ ${f(mx)}</b></span><span>Média: <b>R$ ${f(md)}</b></span></div><div class="scroll rolar"><table>${t}</tbody></table></div><div class="card"><svg viewBox="0 0 640 240" width="100%" role="img" aria-label="Gráfico do preço no período">${g}</svg></div>`;
+}
 
 /* AVISOS DE AUMENTO */
 let AVISOS=[];
@@ -686,7 +672,7 @@ function avisosRender(){
  if(!L.length){$("avisoLista").innerHTML=`<div class="aviso-vazio"><b>Nenhum aviso encontrado</b><span>${st==="nao"?"Não há aumentos pendentes de visualização com estes filtros.":"Não há avisos para os filtros selecionados."}</span></div>`;return}
  $("avisoLista").innerHTML=L.map(a=>`<article class="aviso-card ${a.visualizado?"":"novo"}">
    <div class="aviso-posto"><b>${esc(a.posto)}</b><span>${esc(a.cidade||"")}${a.uf?" · "+esc(a.uf):""}</span><span class="aviso-produto">${esc(a.produto_nome||NM[a.produto]||a.produto)}</span></div>
-   <div class="aviso-precos"><div class="aviso-valor"><small>Semana passada</small><strong>R$ ${f(a.preco_anterior)}</strong></div><span class="aviso-seta">→</span><div class="aviso-valor"><small>Preço atual</small><strong>R$ ${f(a.preco_atual)}</strong></div><div class="aviso-aumento"><strong>▲ R$ ${f(a.diferenca)}</strong>+${f(a.percentual)}%</div></div>
+   <div class="aviso-precos"><div class="aviso-valor"><small>Preço anterior</small><strong>R$ ${f(a.preco_anterior)}</strong></div><span class="aviso-seta">→</span><div class="aviso-valor"><small>Preço atual</small><strong>R$ ${f(a.preco_atual)}</strong></div><div class="aviso-aumento"><strong>▲ R$ ${f(a.diferenca)}</strong>+${f(a.percentual)}%</div></div>
    <div class="aviso-meta">${a.visualizado?'<span class="aviso-lido">Visualizado</span>':'<span class="aviso-novo">NOVO</span>'}<time>Aviso gerado em ${avisoData(a.criado_em)}</time>${a.visualizado?'':`<button class="btn sm" data-aviso-lido="${a.id}">Marcar como visualizado</button>`}</div>
  </article>`).join("");
  document.querySelectorAll("[data-aviso-lido]").forEach(b=>b.onclick=async()=>{b.disabled=true;b.textContent="Marcando…";const {error}=await sb.rpc("marcar_aviso_visualizado",{p_aviso_id:Number(b.dataset.avisoLido)});if(error){$("avisoErr").textContent="Não foi possível marcar o aviso: "+error.message;b.disabled=false;b.textContent="Marcar como visualizado";return}$("avisoErr").textContent="";await avisosCarregar()});
