@@ -212,6 +212,17 @@ dialog{border:1px solid var(--border);border-radius:20px;background:var(--surfac
   :root[data-theme="dark"] .app aside{background:rgba(25,23,30,.96)}
 }
 
+
+/* Controle de acesso por perfil */
+aside button.restrito-perfil{opacity:.72}
+aside button.restrito-perfil .nav-icon{position:relative}
+aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;right:-7px;bottom:-7px;font-size:9px;line-height:1;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:2px}
+.authz-dialog{max-width:420px;text-align:center;padding:28px}
+.authz-dialog .authz-icon{width:58px;height:58px;margin:0 auto 13px;border-radius:18px;display:grid;place-items:center;background:var(--red-bg);color:var(--red);font-size:25px}
+.authz-dialog h3{margin:0 0 7px;font-size:22px;color:var(--text)}
+.authz-dialog p{margin:0 0 18px;color:var(--muted);font-size:13px;line-height:1.55}
+.profile-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-left:2px}
+
 </style>
 </head>
 <body>
@@ -416,6 +427,13 @@ dialog{border:1px solid var(--border);border-radius:20px;background:var(--surfac
   <div class="bar" style="margin:14px 0 0"><button class="btn" id="dOk">Salvar</button><button class="btn sm secondary" id="dNo">Cancelar</button></div>
 </dialog>
 
+<dialog id="dlgAuthz" class="authz-dialog">
+  <div class="authz-icon">🔒</div>
+  <h3>Usuário não autorizado</h3>
+  <p>Seu perfil não possui permissão para acessar esta área. O perfil Logística tem acesso somente ao Painel de preços e aos Avisos.</p>
+  <button class="btn" id="authzOk">Entendi</button>
+</dialog>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script>
@@ -434,7 +452,7 @@ function aplicarTema(escuro,salvar=true){
 aplicarTema(document.documentElement.getAttribute("data-theme")==="dark",false);
 if(themeToggle)themeToggle.onchange=()=>aplicarTema(themeToggle.checked);
 
-let D=[],A=[],RS=[],uf="",col=new Set(),MES_INICIO=null;
+let D=[],A=[],RS=[],uf="",col=new Set(),MES_INICIO=null,PERFIL="";
 const hoje=t=>t&&new Date(t).toDateString()===new Date().toDateString(),hm=t=>new Date(t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),dm=t=>new Date(t).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}),pad=n=>String(n).padStart(2,"0"),dk=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()),br=s=>s.split("-").reverse().join("/");
 const fmtSP=t=>t?new Date(t).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):"—";
 function inicioMesAtualSP(){const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(new Date()).reduce((o,x)=>(o[x.type]=x.value,o),{});return new Date(`${parts.year}-${parts.month}-01T00:00:00-03:00`)}
@@ -443,17 +461,59 @@ const lnk=d=>location.origin+"/posto.html?t="+d.resp.token;
 const wa=(d,msg)=>{let t=(d.resp.telefone||"").replace(/\D/g,"");if(!t)return"";if(!(t.startsWith("55")&&t.length>=12))t="55"+t;return `https://wa.me/${t}?text=${encodeURIComponent(msg)}`};
 const msg=d=>`Bom dia! Estamos revisando os preços deste mês. Houve alguma alteração nos valores dos combustíveis? Se houver, solicite a liberação pelo seu link exclusivo: ${lnk(d)}`;
 
-/* LOGIN */
-async function iniciar(s){$("login").hidden=!!s;$("app").hidden=!s;if(s){$("usr").textContent=s.user.email;await carregar()}}
+/* LOGIN E PERFIS */
+const TELAS_LOGISTICA=new Set(["hoje","avisos"]);
+function acessoPermitido(tela){return PERFIL==="admin"||(PERFIL==="logistica"&&TELAS_LOGISTICA.has(tela))}
+function aplicarPermissoesMenu(){
+ document.querySelectorAll("aside button[data-v]").forEach(b=>{
+   const bloqueado=!acessoPermitido(b.dataset.v);
+   b.classList.toggle("restrito-perfil",bloqueado);
+   b.setAttribute("aria-disabled",bloqueado?"true":"false");
+   b.title=bloqueado?"Usuário não autorizado":"";
+ });
+}
+function mostrarNaoAutorizado(){const d=$("dlgAuthz");if(d&&!d.open)d.showModal()}
+$("authzOk").onclick=()=>$("dlgAuthz").close();
+async function carregarPerfil(){
+ const {data,error}=await sb.rpc("meu_perfil");
+ if(error)throw error;
+ PERFIL=String(data||"").toLowerCase();
+ if(!["admin","logistica"].includes(PERFIL))throw new Error("Usuário sem perfil de acesso ativo.");
+ aplicarPermissoesMenu();
+}
+async function iniciar(s){
+ $("login").hidden=!!s;$("app").hidden=!s;
+ if(!s){PERFIL="";return}
+ $("usr").innerHTML=`${esc(s.user.email)} <span class="profile-tag">${PERFIL?esc(PERFIL):""}</span>`;
+ try{
+   await carregarPerfil();
+   $("usr").innerHTML=`${esc(s.user.email)} <span class="profile-tag">${PERFIL==="admin"?"Admin":"Logística"}</span>`;
+   await carregar();
+ }catch(e){
+   console.error(e);
+   $("app").hidden=true;$("login").hidden=false;
+   $("lErr").textContent="Usuário não autorizado ou sem perfil de acesso ativo.";
+   await sb.auth.signOut();
+ }
+}
 sb.auth.getSession().then(({data})=>iniciar(data.session));
-$("go").onclick=async()=>{const {data,error}=await sb.auth.signInWithPassword({email:$("em").value.trim(),password:$("pw").value});if(error){$("lErr").textContent="E-mail ou senha incorretos.";return}iniciar(data.session)};
+$("go").onclick=async()=>{const {data,error}=await sb.auth.signInWithPassword({email:$("em").value.trim(),password:$("pw").value});if(error){$("lErr").textContent="E-mail ou senha incorretos.";return}$("lErr").textContent="";await iniciar(data.session)};
 $("pw").onkeydown=e=>{if(e.key==="Enter")$("go").click()};
 $("sair").onclick=async()=>{await sb.auth.signOut();location.reload()};
-document.querySelectorAll("aside button[data-v]").forEach(b=>b.onclick=async()=>{document.querySelectorAll("aside button[data-v]").forEach(x=>x.removeAttribute("aria-current"));b.setAttribute("aria-current","true");["hoje","hist","cad","avisos","cfa"].forEach(v=>$("v-"+v).hidden=v!==b.dataset.v);if(b.dataset.v==="avisos")await avisosCarregar();if(b.dataset.v==="cfa")await cfaCarregar()});
+document.querySelectorAll("aside button[data-v]").forEach(b=>b.onclick=async()=>{
+ const tela=b.dataset.v;
+ if(!acessoPermitido(tela)){mostrarNaoAutorizado();return}
+ document.querySelectorAll("aside button[data-v]").forEach(x=>x.removeAttribute("aria-current"));
+ b.setAttribute("aria-current","true");
+ ["hoje","hist","cad","avisos","cfa"].forEach(v=>$("v-"+v).hidden=v!==tela);
+ if(tela==="avisos")await avisosCarregar();
+ if(tela==="cfa")await cfaCarregar();
+});
 
 async function atualizarSistema(){
  const b=$("refreshTop");if(!b||b.disabled||$("app").hidden)return;
  const tela=document.querySelector('aside button[data-v][aria-current="true"]')?.dataset.v||"hoje";
+ if(!acessoPermitido(tela)){mostrarNaoAutorizado();return}
  b.disabled=true;b.classList.remove("done");b.classList.add("loading");b.title="Atualizando dados…";b.setAttribute("aria-label","Atualizando dados");
  try{
    const ok=await carregar();if(ok===false)throw new Error("Falha ao atualizar os dados principais.");
