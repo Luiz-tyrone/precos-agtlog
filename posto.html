@@ -83,7 +83,7 @@ function linkSolicitarAlteracao(){
  const nomes=(T?.postos||[]).map(p=>`${p.nome}${p.cidade?` - ${p.cidade}${p.uf?`/${p.uf}`:""}`:""}`);
  const lista=nomes.length?"%0A%0A"+nomes.map(n=>"• "+n).join("%0A"):"";
  const texto=`Olá, sou ${encodeURIComponent(T?.responsavel||"")}. Houve alteração nos preços dos combustíveis e solicito a liberação para atualizar os preços de todos os postos vinculados ao meu link.${lista}`;
- return `https://wa.me/5562985318950?text=${texto}`;
+ return `https://wa.me/5562983239644?text=${texto}`;
 }
 function desenhar(){
  const editaveis=T.postos.filter(p=>p.pode_editar).length,bloqueados=T.postos.length-editaveis;
