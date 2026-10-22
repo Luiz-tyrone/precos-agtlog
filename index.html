@@ -561,7 +561,7 @@ function estadoEdicao(d){
  if(d.ult)return `<span class="edit-state locked">Preço bloqueado</span>`;
  return `<span class="edit-state neutral">Primeiro envio disponível</span>`
 }
-function linha(d,mn){const w=wa(d,msg(d));return `<tr><td>${esc(d.nome)}${d.observacao?` <span class="av" title="${esc(d.observacao)}">⚠</span>`:""}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td class="n">${cel(d,"s10",mn)}</td><td class="n">${cel(d,"s500")}</td><td class="n">${cel(d,"arla")}</td><td>${esc(d.prazo)||"—"}</td><td>${d.pend?`<span class="pill pend">Sem atualização no mês</span> ${w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Consultar no WhatsApp</a>`:`<span class="av">sem telefone</span>`}`:`<span class="pill ok">Atualizado no mês</span>`}</td><td>${ultTxt(d)}</td></tr>`}
+function linha(d,mn){const w=wa(d,msg(d)),contato=PERFIL==="admin"?(w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Consultar no WhatsApp</a>`:`<span class="av">sem telefone</span>`):"";return `<tr><td>${esc(d.nome)}${d.observacao?` <span class="av" title="${esc(d.observacao)}">⚠</span>`:""}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td class="n">${cel(d,"s10",mn)}</td><td class="n">${cel(d,"s500")}</td><td class="n">${cel(d,"arla")}</td><td>${esc(d.prazo)||"—"}</td><td>${d.pend?`<span class="pill pend">Sem atualização no mês</span> ${contato}`:`<span class="pill ok">Atualizado no mês</span>`}</td><td>${ultTxt(d)}</td></tr>`}
 function tabela(){
  const q=$("q").value.trim().toLowerCase(),o=$("ord").value,p=$("pend").checked;
  const L=D.filter(d=>(!uf||(d.uf||"—")===uf)&&(!p||d.pend)&&(!q||(d.nome+" "+d.cidade+" "+d.uf+" "+(d.resp.nome||"")).toLowerCase().includes(q)));
