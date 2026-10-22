@@ -267,15 +267,15 @@ dialog{border:1px solid var(--border);border-radius:20px;background:var(--surfac
   <main>
     <section id="v-hoje">
       <div class="section-head">
-        <div><div class="eyebrow">Ciclo semanal</div><h1>Painel de preços</h1><p>Acompanhe quem já respondeu nesta semana, identifique pendências e compare rapidamente os menores preços informados no ciclo atual.</p></div>
-        <span class="date-chip">Liberação: segunda-feira · 08:00</span>
+        <div><div class="eyebrow">Visão mensal</div><h1>Painel de preços</h1><p>Acompanhe os postos que tiveram atualização neste mês, identifique unidades sem atualização e compare rapidamente os menores preços vigentes.</p></div>
+        <span class="date-chip" id="periodoMes">Referência: mês atual</span>
       </div>
       <div class="kpis" id="kpis"></div>
       <div class="toolbar-card">
         <div class="bar">
           <input type="search" id="q" placeholder="Buscar posto, cidade ou responsável..." aria-label="Buscar">
           <select id="ord" aria-label="Ordenar"><option value="uf">Agrupar por estado</option><option value="s10">Menor S-10</option><option value="s500">Menor S-500</option><option value="arla">Menor Arla</option><option value="ult">Mais tempo sem atualizar</option></select>
-          <label class="check-filter"><input type="checkbox" id="pend"> Só aguardando</label>
+          <label class="check-filter"><input type="checkbox" id="pend"> Sem atualização no mês</label>
           <button class="btn sm secondary" id="expAll">Expandir tudo</button><button class="btn sm secondary" id="colAll">Recolher tudo</button>
         </div>
       </div>
@@ -434,13 +434,14 @@ function aplicarTema(escuro,salvar=true){
 aplicarTema(document.documentElement.getAttribute("data-theme")==="dark",false);
 if(themeToggle)themeToggle.onchange=()=>aplicarTema(themeToggle.checked);
 
-let D=[],A=[],RS=[],uf="",col=new Set(),CICLO_INICIO=null,PROX_LIBERACAO=null;
+let D=[],A=[],RS=[],uf="",col=new Set(),MES_INICIO=null;
 const hoje=t=>t&&new Date(t).toDateString()===new Date().toDateString(),hm=t=>new Date(t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),dm=t=>new Date(t).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}),pad=n=>String(n).padStart(2,"0"),dk=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()),br=s=>s.split("-").reverse().join("/");
 const fmtSP=t=>t?new Date(t).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):"—";
-function cicloFallback(){const now=new Date(),parts=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit",day:"2-digit",weekday:"short",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(now).reduce((o,x)=>(o[x.type]=x.value,o),{}),isoDay={Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6,Sun:7}[parts.weekday]||1,y=+parts.year,m=+parts.month,d=+parts.day,hh=+parts.hour,mi=+parts.minute;let localMid=Date.UTC(y,m-1,d,11,0,0),start=localMid-(isoDay-1)*864e5;if(isoDay===1&&(hh<8||(hh===8&&mi<0)))start-=7*864e5;return new Date(start)}
+function inicioMesAtualSP(){const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(new Date()).reduce((o,x)=>(o[x.type]=x.value,o),{});return new Date(`${parts.year}-${parts.month}-01T00:00:00-03:00`)}
+function nomeMesAtualSP(){return new Intl.DateTimeFormat("pt-BR",{timeZone:"America/Sao_Paulo",month:"long",year:"numeric"}).format(new Date()).replace(/^./,c=>c.toUpperCase())}
 const lnk=d=>location.origin+"/posto.html?t="+d.resp.token;
 const wa=(d,msg)=>{let t=(d.resp.telefone||"").replace(/\D/g,"");if(!t)return"";if(!(t.startsWith("55")&&t.length>=12))t="55"+t;return `https://wa.me/${t}?text=${encodeURIComponent(msg)}`};
-const msg=d=>`Bom dia! Pode informar os preços desta semana pelo seu link exclusivo? ${lnk(d)}`;
+const msg=d=>`Bom dia! Estamos revisando os preços deste mês. Houve alguma alteração nos valores dos combustíveis? Se houver, solicite a liberação pelo seu link exclusivo: ${lnk(d)}`;
 
 /* LOGIN */
 async function iniciar(s){$("login").hidden=!!s;$("app").hidden=!s;if(s){$("usr").textContent=s.user.email;await carregar()}}
@@ -470,25 +471,25 @@ $("refreshTop").onclick=atualizarSistema;
 
 /* DADOS */
 async function carregar(){
- const [a,b,rr,cy]=await Promise.all([sb.from("postos").select("*,responsaveis(nome,telefone,token,ativo)").order("uf").order("nome"),sb.from("ultimo_preco").select("*"),sb.from("responsaveis").select("*").order("nome"),sb.rpc("inicio_ciclo_precos")]);
+ const [a,b,rr]=await Promise.all([sb.from("postos").select("*,responsaveis(nome,telefone,token,ativo)").order("uf").order("nome"),sb.from("ultimo_preco").select("*"),sb.from("responsaveis").select("*").order("nome")]);
  if(a.error||b.error||rr.error){alert("Erro ao carregar os dados: "+(a.error||b.error||rr.error).message);return false}
- CICLO_INICIO=cy&&!cy.error&&cy.data?new Date(cy.data):cicloFallback();
- PROX_LIBERACAO=new Date(CICLO_INICIO.getTime()+7*864e5);
+ MES_INICIO=inicioMesAtualSP();
+ if($("periodoMes"))$("periodoMes").textContent="Referência: "+nomeMesAtualSP();
  const m={};b.data.forEach(r=>{(m[r.posto_id]=m[r.posto_id]||{})[r.produto]=r});
- A=a.data.map(p=>{const u=m[p.id]||{},ult=Object.values(u).map(x=>x.enviado_em).sort().pop();return {...p,u,ult,pend:!ult||new Date(ult)<CICLO_INICIO,resp:p.responsaveis||{}}});RS=rr.data;D=A.filter(p=>p.ativo&&p.resp.ativo!==false);
+ A=a.data.map(p=>{const u=m[p.id]||{},ult=Object.values(u).map(x=>x.enviado_em).sort().pop();return {...p,u,ult,pend:!ult||new Date(ult)<MES_INICIO,resp:p.responsaveis||{}}});RS=rr.data;D=A.filter(p=>p.ativo&&p.resp.ativo!==false);
  window.UF=[...new Set(D.map(d=>d.uf||"—"))].sort();
  $("nPend").textContent=D.filter(d=>d.pend).length;
  kpis();chips();tabela();histInit();cad();avisosContador();return true}
 const val=(d,k)=>d.u[k]?Number(d.u[k].valor):null,vende=(d,k)=>(d.produtos||[]).includes(k);
 
 /* HOJE */
-function kpis(){const ok=D.filter(d=>!d.pend),pend=D.length-ok.length,m=k=>{const a=ok.filter(d=>val(d,k)!=null);if(!a.length)return `<b>—</b><span>Menor ${NM[k]}: sem dados nesta semana</span>`;const x=a.reduce((p,c)=>val(c,k)<val(p,k)?c:p);return `<b>R$ ${f(val(x,k))}</b><span>Menor ${NM[k]} da semana · ${esc(x.nome)} · ${esc(x.cidade)}${x.uf?"/"+x.uf:""}</span>`};
- $("kpis").innerHTML=`<div class="kpi kpi-progress"><span class="kpi-label">Respondidos nesta semana</span><b>${ok.length}<small> / ${D.length}</small></b><span>${D.length?Math.round(ok.length/D.length*100):0}% das unidades responderam no ciclo atual</span></div><div class="kpi kpi-wait"><span class="kpi-label">Aguardando nesta semana</span><b>${pend}</b><span>${pend===1?"unidade ainda precisa responder":"unidades ainda precisam responder"}</span></div>`+PR.map(k=>`<div class="kpi kpi-price">${m(k)}</div>`).join("")}
-function chips(){$("chips").innerHTML=`<button class="chip" data-u="" aria-pressed="${uf===""}">Todos<small>${D.length}</small></button>`+UF.map(u=>{const a=D.filter(d=>(d.uf||"—")===u),p=a.filter(d=>d.pend).length;return `<button class="chip" data-u="${u}" aria-pressed="${uf===u}">${u}<small>${a.length}</small>${p?`<i title="${p} aguardando">${p}</i>`:""}</button>`}).join("");
+function kpis(){const ok=D.filter(d=>!d.pend),pend=D.length-ok.length,m=k=>{const a=ok.filter(d=>val(d,k)!=null);if(!a.length)return `<b>—</b><span>Menor ${NM[k]}: sem atualização neste mês</span>`;const x=a.reduce((p,c)=>val(c,k)<val(p,k)?c:p);return `<b>R$ ${f(val(x,k))}</b><span>Menor ${NM[k]} entre os atualizados no mês · ${esc(x.nome)} · ${esc(x.cidade)}${x.uf?"/"+x.uf:""}</span>`};
+ $("kpis").innerHTML=`<div class="kpi kpi-progress"><span class="kpi-label">Atualizados neste mês</span><b>${ok.length}<small> / ${D.length}</small></b><span>${D.length?Math.round(ok.length/D.length*100):0}% das unidades tiveram atualização no mês</span></div><div class="kpi kpi-wait"><span class="kpi-label">Sem atualização neste mês</span><b>${pend}</b><span>${pend===1?"unidade sem atualização no mês":"unidades sem atualização no mês"}</span></div>`+PR.map(k=>`<div class="kpi kpi-price">${m(k)}</div>`).join("")}
+function chips(){$("chips").innerHTML=`<button class="chip" data-u="" aria-pressed="${uf===""}">Todos<small>${D.length}</small></button>`+UF.map(u=>{const a=D.filter(d=>(d.uf||"—")===u),p=a.filter(d=>d.pend).length;return `<button class="chip" data-u="${u}" aria-pressed="${uf===u}">${u}<small>${a.length}</small>${p?`<i title="${p} sem atualização no mês">${p}</i>`:""}</button>`}).join("");
  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{uf=b.dataset.u;chips();tabela()})}
 const cel=(d,k,mn)=>{if(!vende(d,k)||val(d,k)==null)return "—";const v=val(d,k);return d.pend?`<span class="old" title="Preço do último envio">${f(v)}</span>`:(k==="s10"&&v===mn?`<span class="min" title="Menor S-10 do estado">${f(v)}</span>`:f(v))};
 function ultTxt(d){if(!d.ult)return `<span class="av">Nunca atualizou</span>`;if(hoje(d.ult))return "Hoje, "+hm(d.ult);const n=Math.floor((new Date(new Date().toDateString())-new Date(new Date(d.ult).toDateString()))/864e5);return `<span${n>=3?' class="av"':""}>${dm(d.ult)}, ${hm(d.ult)}</span> <span class="old">(há ${n} ${n>1?"dias":"dia"})</span>`}
-function respondidoCiclo(d){return !!d.ult&&!!CICLO_INICIO&&new Date(d.ult)>=CICLO_INICIO}
+function atualizadoNoMes(d){return !!d.ult&&!!MES_INICIO&&new Date(d.ult)>=MES_INICIO}
 function bloqueadoSemanal(d){return !!d.ult&&!d.liberado_manual}
 function proxEdicao(d){
  if(d.liberado_manual)return "Alteração autorizada pela administração";
@@ -500,7 +501,7 @@ function estadoEdicao(d){
  if(d.ult)return `<span class="edit-state locked">Preço bloqueado</span>`;
  return `<span class="edit-state neutral">Primeiro envio disponível</span>`
 }
-function linha(d,mn){const w=wa(d,msg(d));return `<tr><td>${esc(d.nome)}${d.observacao?` <span class="av" title="${esc(d.observacao)}">⚠</span>`:""}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td class="n">${cel(d,"s10",mn)}</td><td class="n">${cel(d,"s500")}</td><td class="n">${cel(d,"arla")}</td><td>${esc(d.prazo)||"—"}</td><td>${d.pend?`<span class="pill pend">Aguardando</span> ${w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Cobrar no WhatsApp</a>`:`<span class="av">sem telefone</span>`}`:`<span class="pill ok">Respondeu</span>`}</td><td>${ultTxt(d)}</td></tr>`}
+function linha(d,mn){const w=wa(d,msg(d));return `<tr><td>${esc(d.nome)}${d.observacao?` <span class="av" title="${esc(d.observacao)}">⚠</span>`:""}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td class="n">${cel(d,"s10",mn)}</td><td class="n">${cel(d,"s500")}</td><td class="n">${cel(d,"arla")}</td><td>${esc(d.prazo)||"—"}</td><td>${d.pend?`<span class="pill pend">Sem atualização no mês</span> ${w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Consultar no WhatsApp</a>`:`<span class="av">sem telefone</span>`}`:`<span class="pill ok">Atualizado no mês</span>`}</td><td>${ultTxt(d)}</td></tr>`}
 function tabela(){
  const q=$("q").value.trim().toLowerCase(),o=$("ord").value,p=$("pend").checked;
  const L=D.filter(d=>(!uf||(d.uf||"—")===uf)&&(!p||d.pend)&&(!q||(d.nome+" "+d.cidade+" "+d.uf+" "+(d.resp.nome||"")).toLowerCase().includes(q)));
@@ -509,7 +510,7 @@ function tabela(){
  else if(o==="ult")[...L].sort((a,b)=>(a.ult||"").localeCompare(b.ult||"")).forEach(d=>h+=linha(d,-1));
  else if(o!=="uf")[...L].sort((a,b)=>(val(a,o)??99)-(val(b,o)??99)).forEach(d=>h+=linha(d,-1));
  else UF.forEach(u=>{const g=L.filter(d=>(d.uf||"—")===u);if(!g.length)return;const r=g.filter(d=>!d.pend&&val(d,"s10")!=null),mn=r.length>1?Math.min(...r.map(d=>val(d,"s10"))):-1,c=col.has(u);
-  h+=`<tr class="g"><td colspan="8"><button data-g="${u}" aria-expanded="${!c}">${c?"▸":"▾"} ${u}<span>${g.length} postos · ${g.filter(d=>!d.pend).length} responderam na semana${r.length?` · menor S-10 R$ ${f(Math.min(...r.map(d=>val(d,"s10"))))}`:""}</span></button></td></tr>`;
+  h+=`<tr class="g"><td colspan="8"><button data-g="${u}" aria-expanded="${!c}">${c?"▸":"▾"} ${u}<span>${g.length} postos · ${g.filter(d=>!d.pend).length} atualizados no mês${r.length?` · menor S-10 R$ ${f(Math.min(...r.map(d=>val(d,"s10"))))}`:""}</span></button></td></tr>`;
   if(!c)g.forEach(d=>h+=linha(d,mn))});
  $("tbl").innerHTML=h+"</tbody>";
  document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{const u=b.dataset.g;col.has(u)?col.delete(u):col.add(u);tabela()})}
