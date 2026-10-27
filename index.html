@@ -223,6 +223,103 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
 .authz-dialog p{margin:0 0 18px;color:var(--muted);font-size:13px;line-height:1.55}
 .profile-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-left:2px}
 
+
+
+/* AGT-LOG · Botões vivos — apenas apresentação visual.
+   Preserva paleta, dimensões, ações, permissões e dados do sistema. */
+:where(button, a.whatsapp-request){
+  --agt-vivo-x:50%;
+  --agt-vivo-y:50%;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .24s cubic-bezier(.2,.8,.2,1),
+             box-shadow .24s ease, filter .24s ease,
+             background-color .24s ease, border-color .24s ease;
+}
+:where(button, a.whatsapp-request)::before,
+:where(button, a.whatsapp-request)::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:1;
+}
+:where(button, a.whatsapp-request)::before{
+  opacity:0;
+  background:radial-gradient(190px circle at var(--agt-vivo-x) var(--agt-vivo-y),
+    rgba(255,255,255,.25),rgba(255,255,255,.06) 38%,transparent 75%);
+  transition:opacity .20s ease;
+}
+/* Nas superfícies claras, o reflexo utiliza o roxo da AGT-LOG. */
+:where(button.btn.secondary, button.btn.unlock, button.chip, button.refresh-top, aside button):not([aria-current="true"])::before{
+  background:radial-gradient(190px circle at var(--agt-vivo-x) var(--agt-vivo-y),
+    rgba(102,64,130,.12),rgba(102,64,130,.03) 43%,transparent 76%);
+}
+:where(button, a.whatsapp-request)::after{
+  background:linear-gradient(108deg,transparent 24%,rgba(255,255,255,.20) 49%,transparent 74%);
+  transform:translateX(-145%) skewX(-16deg);
+  opacity:0;
+  transition:transform .70s cubic-bezier(.2,.8,.2,1),opacity .16s ease;
+}
+@media(hover:hover) and (pointer:fine){
+  :where(button:not(:disabled), a.whatsapp-request):hover{
+    transform:translateY(-2px);
+    filter:brightness(1.045);
+    box-shadow:0 10px 24px rgba(53,35,68,.19);
+  }
+  :where(aside button, tr.g button, button.chip):not(:disabled):hover{
+    transform:translateY(-1px);
+    box-shadow:0 5px 14px rgba(53,35,68,.09);
+  }
+  :where(button:not(:disabled), a.whatsapp-request):hover::before{opacity:1}
+  :where(button:not(:disabled), a.whatsapp-request):hover::after{
+    opacity:1;
+    transform:translateX(145%) skewX(-16deg);
+  }
+}
+:where(button:not(:disabled), a.whatsapp-request):active{
+  transform:translateY(0) scale(.982);
+  filter:brightness(.98);
+  transition-duration:.10s;
+}
+:where(button:disabled,button[aria-disabled="true"]){
+  cursor:not-allowed;
+}
+:where(button:disabled,button[aria-disabled="true"])::before,
+:where(button:disabled,button[aria-disabled="true"])::after{opacity:0!important}
+.agt-vivo-ripple{
+  position:absolute;
+  left:0;top:0;
+  width:18px;height:18px;
+  border-radius:50%;
+  background:rgba(255,255,255,.34);
+  pointer-events:none;
+  z-index:2;
+  transform:translate(-50%,-50%) scale(0);
+  animation:agt-vivo-pulse .55s ease-out forwards;
+}
+:where(button.btn.secondary,button.btn.unlock,button.chip,button.refresh-top,aside button) .agt-vivo-ripple{
+  background:rgba(100,62,129,.18);
+}
+@keyframes agt-vivo-pulse{
+  0%{opacity:.72;transform:translate(-50%,-50%) scale(0)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(var(--agt-vivo-scale,15))}
+}
+@media(prefers-reduced-motion:reduce){
+  :where(button,a.whatsapp-request),
+  :where(button,a.whatsapp-request)::before,
+  :where(button,a.whatsapp-request)::after{
+    animation:none!important;
+    transition:none!important;
+  }
+  :where(button,a.whatsapp-request):hover,
+  :where(button,a.whatsapp-request):active{transform:none!important;filter:none!important}
+  .agt-vivo-ripple{display:none!important;animation:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -750,6 +847,41 @@ $("dOk").onclick=async()=>{const pr=[...$("dP").querySelectorAll("input:checked"
  const cfg={...(cur.config_tela||{}),observacao:$("dObs").checked,extras:ex};
  const {error}=await sb.from("postos").update({produtos:pr,config_tela:cfg}).eq("id",cur.id);if(error){alert("Erro ao salvar: "+error.message);return}
  $("dlg").close();await carregar()};
+</script>
+
+
+<script>
+/* AGT-LOG · Reflexo que acompanha o mouse e feedback de clique.
+   Eventos delegados: botões carregados dinamicamente também recebem o efeito. */
+(()=>{
+  "use strict";
+  const seletor='button, a.whatsapp-request';
+  const reduzir=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const obter=el=>el instanceof Element?el.closest(seletor):null;
+  const inativo=el=>el?.matches('button:disabled, [aria-disabled="true"]');
+  document.addEventListener('pointermove',e=>{
+    if(reduzir.matches || e.pointerType!=='mouse')return;
+    const botao=obter(e.target);
+    if(!botao || inativo(botao))return;
+    const r=botao.getBoundingClientRect();
+    botao.style.setProperty('--agt-vivo-x',(e.clientX-r.left)+'px');
+    botao.style.setProperty('--agt-vivo-y',(e.clientY-r.top)+'px');
+  },{passive:true});
+  document.addEventListener('pointerdown',e=>{
+    if(reduzir.matches || (e.pointerType==='mouse' && e.button!==0))return;
+    const botao=obter(e.target);
+    if(!botao || inativo(botao))return;
+    const r=botao.getBoundingClientRect();
+    const onda=document.createElement('span');
+    onda.className='agt-vivo-ripple';
+    onda.setAttribute('aria-hidden','true');
+    onda.style.left=(e.clientX-r.left)+'px';
+    onda.style.top=(e.clientY-r.top)+'px';
+    onda.style.setProperty('--agt-vivo-scale',Math.ceil(Math.max(r.width,r.height)/9+2));
+    botao.appendChild(onda);
+    setTimeout(()=>onda.remove(),650);
+  },{passive:true});
+})();
 </script>
 
 </body>
