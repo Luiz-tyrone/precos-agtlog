@@ -422,7 +422,7 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
 
       <div class="aviso-summary">
         <div class="aviso-stat"><span>Não visualizados</span><b id="avisoNaoLidos">0</b></div>
-        <div class="aviso-stat"><span>Avisos ativos</span><b id="avisoTotal">0</b></div>
+        <div class="aviso-stat"><span id="avisoTotalLabel">Avisos ativos</span><b id="avisoTotal">0</b></div>
         <div class="aviso-stat"><span>Maior aumento</span><b id="avisoMaior">—</b></div>
       </div>
 
@@ -765,7 +765,7 @@ async function avisosContador(){
 }
 function avisosResumo(){
  const nao=AVISOS.filter(a=>!a.visualizado).length,total=AVISOS.length,maior=AVISOS.length?Math.max(...AVISOS.map(a=>Number(a.diferenca)||0)):null;
- $("avisoNaoLidos").textContent=nao;$("avisoTotal").textContent=total;$("avisoMaior").textContent=maior==null?"—":"R$ "+f(maior);
+ $("avisoNaoLidos").textContent=nao;$("avisoMaior").textContent=maior==null?"—":"R$ "+f(maior);
  $("avisoMarcarTodos").disabled=nao===0;
 }
 function avisosRender(){
@@ -774,6 +774,9 @@ function avisosRender(){
    if(st==="nao"&&a.visualizado)return false;if(st==="lidos"&&!a.visualizado)return false;if(pr&&a.produto!==pr)return false;
    return !q||(`${a.posto||""} ${a.cidade||""} ${a.uf||""}`).toLowerCase().includes(q);
  });
+ const labels={nao:"Avisos ativos",lidos:"Avisos visualizados",todos:"Total de avisos"};
+ $("avisoTotalLabel").textContent=labels[st]||"Total de avisos";
+ $("avisoTotal").textContent=L.length;
  if(!L.length){$("avisoLista").innerHTML=`<div class="aviso-vazio"><b>Nenhum aviso encontrado</b><span>${st==="nao"?"Não há aumentos pendentes de visualização com estes filtros.":"Não há avisos para os filtros selecionados."}</span></div>`;return}
  $("avisoLista").innerHTML=L.map(a=>`<article class="aviso-card ${a.visualizado?"":"novo"}">
    <div class="aviso-posto"><b>${esc(a.posto)}</b><span>${esc(a.cidade||"")}${a.uf?" · "+esc(a.uf):""}</span><span class="aviso-produto">${esc(a.produto_nome||NM[a.produto]||a.produto)}</span></div>
