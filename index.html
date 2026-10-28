@@ -787,9 +787,20 @@ function avisosRender(){
 }
 async function avisosCarregar(){
  const E=$("avisoErr");E.textContent="Carregando avisos…";
- const {data,error}=await sb.from("avisos_precos_painel").select("*").order("atualizado_em",{ascending:false});
- if(error){E.textContent="Erro ao carregar avisos: "+error.message;AVISOS=[];avisosResumo();avisosRender();return}
- AVISOS=(data||[]).sort((a,b)=>Number(a.visualizado)-Number(b.visualizado)||new Date(b.criado_em)-new Date(a.criado_em));E.textContent="";avisosResumo();avisosRender();await avisosContador();
+ // Paginação: o Supabase normalmente devolve no máximo 1.000 linhas por consulta.
+ // Percorremos todas as páginas para que os indicadores não fiquem travados em 1.000.
+ const lote=500,registros=[];
+ let erroConsulta=null;
+ for(let inicio=0;;inicio+=lote){
+   const {data,error}=await sb.from("avisos_precos_painel").select("*")
+     .order("atualizado_em",{ascending:false}).order("id",{ascending:false})
+     .range(inicio,inicio+lote-1);
+   if(error){erroConsulta=error;break}
+   registros.push(...(data||[]));
+   if(!data||data.length<lote)break;
+ }
+ if(erroConsulta){E.textContent="Erro ao carregar avisos: "+erroConsulta.message;AVISOS=[];avisosResumo();avisosRender();return}
+ AVISOS=registros.sort((a,b)=>Number(a.visualizado)-Number(b.visualizado)||new Date(b.criado_em)-new Date(a.criado_em));E.textContent="";avisosResumo();avisosRender();await avisosContador();
 }
 $("avisoBusca").oninput=avisosRender;$("avisoStatus").onchange=avisosRender;$("avisoProduto").onchange=avisosRender;
 $("avisoMarcarTodos").onclick=async()=>{if(!AVISOS.some(a=>!a.visualizado))return;if(!confirm("Marcar todos os avisos de aumento como visualizados?"))return;const b=$("avisoMarcarTodos"),txt=b.textContent;b.disabled=true;b.textContent="Marcando…";const {data,error}=await sb.rpc("marcar_todos_avisos_visualizados");b.textContent=txt;if(error){$("avisoErr").textContent="Não foi possível marcar os avisos: "+error.message;b.disabled=false;return}$("avisoErr").textContent=(data||0)+" aviso(s) marcado(s) como visualizado(s).";await avisosCarregar()};
