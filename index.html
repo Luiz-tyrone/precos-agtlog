@@ -78,6 +78,14 @@ dialog{border:1px solid var(--border);border-radius:20px;background:var(--surfac
 .aviso-toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:14px;box-shadow:var(--shadow-sm)}.aviso-toolbar input[type=search]{flex:1;min-width:250px}.aviso-toolbar select{min-width:165px}.aviso-toolbar .btn{margin-left:auto}
 .aviso-lista{display:grid;gap:10px}.aviso-card{background:var(--surface);border:1px solid var(--border);border-radius:17px;padding:16px 17px;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:minmax(210px,1.25fr) minmax(250px,1fr) auto;gap:18px;align-items:center;position:relative;overflow:hidden}.aviso-card.novo{border-color:#f0c7c3;background:linear-gradient(90deg,#fff8f7 0,#fff 34%)}.aviso-card.novo:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#d93b35}.aviso-posto b{display:block;color:var(--purple);font-size:15px}.aviso-posto span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.aviso-produto{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--purple);background:var(--purple-soft);padding:5px 8px;border-radius:999px;margin-top:9px}.aviso-precos{display:flex;align-items:center;gap:11px;flex-wrap:wrap}.aviso-valor{min-width:86px}.aviso-valor small{display:block;color:var(--muted);font-size:10px;margin-bottom:2px}.aviso-valor strong{font-size:20px;font-variant-numeric:tabular-nums}.aviso-seta{font-size:19px;color:#a79fa9}.aviso-aumento{background:var(--red-bg);color:var(--red);border-radius:12px;padding:8px 10px;font-size:11px;font-weight:800;white-space:nowrap}.aviso-aumento strong{display:block;font-size:15px}.aviso-meta{text-align:right;min-width:150px}.aviso-novo{display:inline-flex;background:#d93b35;color:#fff;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900;letter-spacing:.04em;margin-bottom:7px}.aviso-lido{display:inline-flex;background:#f2eff4;color:#7a717e;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;margin-bottom:7px}.aviso-meta time{display:block;color:var(--muted);font-size:10px;margin-bottom:8px}.aviso-vazio{background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--radius);padding:42px 18px;text-align:center;color:var(--muted)}.aviso-vazio b{display:block;color:var(--purple);font-size:17px;margin-bottom:4px}
 
+/* Maior aumento clicável */
+.aviso-maior-link{display:block;width:max-content;max-width:100%;border:0;background:transparent;padding:0;margin-top:3px;font-size:23px;font-weight:800;color:var(--text);cursor:pointer;text-align:left;line-height:1.5}
+.aviso-maior-link:not(:disabled){text-decoration:underline;text-decoration-style:dotted;text-underline-offset:5px;text-decoration-color:var(--purple)}
+.aviso-maior-link:not(:disabled):hover{color:var(--purple)}
+.aviso-maior-link:disabled{cursor:default;opacity:1}
+.aviso-maior-dica{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.aviso-card.aviso-destaque{outline:3px solid var(--purple);outline-offset:2px;box-shadow:0 0 0 7px rgba(100,62,129,.10)}
+
 /* Integração CFA */
 .cfa-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}.cfa-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}.cfa-card h3{margin:0 0 4px;color:var(--purple);font-size:17px}.cfa-card>p{margin:0 0 15px;color:var(--muted);font-size:12px}.cfa-dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cfa-dates input{width:100%}.cfa-mode{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.cfa-mode label{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--border);border-radius:12px;padding:11px;background:var(--surface-2);cursor:pointer}.cfa-mode input{margin-top:3px;accent-color:var(--purple)}.cfa-mode b{display:block;color:var(--purple);font-size:12px}.cfa-mode span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.cfa-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.cfa-stat{border:1px solid var(--border);border-radius:13px;padding:12px;background:var(--surface-2)}.cfa-stat span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:800}.cfa-stat b{display:block;color:var(--text);font-size:22px;margin-top:3px}.cfa-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.cfa-actions .btn{min-width:150px}.cfa-select-wrap{margin-top:14px}.cfa-select-head{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:9px}.cfa-select-head input{flex:1;min-width:240px}.cfa-list{border:1px solid var(--border);border-radius:14px;overflow:auto;max-height:360px;background:#fff}.cfa-row{display:grid;grid-template-columns:34px minmax(220px,1.5fr) minmax(120px,.7fr) minmax(170px,1fr);gap:10px;align-items:center;padding:10px 12px;border-top:1px solid #f0edf2}.cfa-row:first-child{border-top:0}.cfa-row:hover{background:#fcfbfd}.cfa-row input{accent-color:var(--purple)}.cfa-row .posto{font-weight:750;color:var(--text)}.cfa-row .sub{display:block;color:var(--muted);font-size:11px;font-weight:400}.cfa-products{display:flex;gap:7px;flex-wrap:wrap}.cfa-prod{display:inline-flex;flex-direction:column;gap:1px;background:var(--purple-soft);color:var(--purple);font-size:10px;font-weight:800;border-radius:11px;padding:5px 8px;line-height:1.25}.cfa-prod small{display:block;color:var(--muted);font-size:9px;font-weight:600;white-space:nowrap}.cfa-preview{white-space:pre-wrap;background:#1f1723;color:#f7f1fa;border-radius:14px;padding:14px;max-height:300px;overflow:auto;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;margin:10px 0 0}.cfa-empty{padding:28px 16px;text-align:center;color:var(--muted)}.cfa-note{background:#fff8e6;border:1px solid #f0d98c;color:#735000;border-radius:12px;padding:10px 12px;font-size:11px;margin-top:12px}.cfa-history{margin-top:16px}.cfa-history .scroll table{min-width:760px}.cfa-history td:last-child,.cfa-history th:last-child{text-align:right}.cfa-ok{color:var(--green);font-weight:750}.cfa-error{color:var(--red);font-size:12px;margin-top:8px;min-height:18px}
 
@@ -320,6 +328,17 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
   .agt-vivo-ripple{display:none!important;animation:none!important}
 }
 
+
+/* Abas e consulta histórica dos avisos */
+.aviso-abas{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}
+.aviso-aba{border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);border-radius:12px;padding:11px 17px;font-weight:800;cursor:pointer}
+.aviso-aba.ativa{background:var(--purple);color:#fff;border-color:var(--purple)}
+.aviso-historico-filtros{align-items:end}
+.aviso-historico-filtros>div{min-width:140px;flex:1}
+.aviso-historico-filtros .aviso-hist-busca{flex:2;min-width:190px}
+.aviso-historico-filtros input,.aviso-historico-filtros select{width:100%;min-width:0}
+.aviso-historico-filtros .btn{margin-left:0}
+@media(max-width:560px){.aviso-abas>*{flex:1}.aviso-historico-filtros>div{min-width:100%}}
 </style>
 </head>
 <body>
@@ -420,10 +439,15 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
         <span class="date-chip">Comparação automática por produto</span>
       </div>
 
+      <div class="aviso-abas" role="tablist" aria-label="Visualização dos avisos">
+        <button type="button" id="avisoAbaAtuais" class="aviso-aba ativa" role="tab" aria-selected="true">Avisos atuais</button>
+        <button type="button" id="avisoAbaHistorico" class="aviso-aba" role="tab" aria-selected="false">Histórico de avisos</button>
+      </div>
+      <div id="avisoPainelAtuais" role="tabpanel">
       <div class="aviso-summary">
         <div class="aviso-stat"><span>Não visualizados</span><b id="avisoNaoLidos">0</b></div>
         <div class="aviso-stat"><span id="avisoTotalLabel">Avisos ativos</span><b id="avisoTotal">0</b></div>
-        <div class="aviso-stat"><span>Maior aumento</span><b id="avisoMaior">—</b></div>
+        <div class="aviso-stat"><span>Maior aumento</span><button type="button" id="avisoMaior" class="aviso-maior-link" disabled title="Ver aviso do maior aumento">—</button><small class="aviso-maior-dica" id="avisoMaiorDica">Clique para localizar o aviso</small></div>
       </div>
 
       <div class="aviso-toolbar">
@@ -444,6 +468,24 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
 
       <p class="erro" id="avisoErr" role="alert"></p>
       <div class="aviso-lista" id="avisoLista"></div>
+      </div>
+      <div id="avisoPainelHistorico" role="tabpanel" hidden>
+        <div class="aviso-toolbar aviso-historico-filtros">
+          <div><label class="fl" for="avisoHistInicio">Data inicial</label><input type="date" id="avisoHistInicio"></div>
+          <div><label class="fl" for="avisoHistFim">Data final</label><input type="date" id="avisoHistFim"></div>
+          <div><label class="fl" for="avisoHistProduto">Produto</label><select id="avisoHistProduto"><option value="">Todos os produtos</option><option value="s10">Diesel S-10</option><option value="s500">Diesel S-500</option><option value="arla">ARLA</option></select></div>
+          <div class="aviso-hist-busca"><label class="fl" for="avisoHistBusca">Pesquisar posto</label><input type="search" id="avisoHistBusca" placeholder="Posto, cidade ou UF..."></div>
+          <button type="button" class="btn" id="avisoHistConsultar">Consultar período</button>
+        </div>
+        <div class="aviso-summary">
+          <div class="aviso-stat"><span>Aumentos no período</span><b id="avisoHistTotal">0</b></div>
+          <div class="aviso-stat"><span>Postos com aumento</span><b id="avisoHistPostos">0</b></div>
+          <div class="aviso-stat"><span>Maior aumento no período</span><b id="avisoHistMaior">—</b></div>
+        </div>
+        <p class="nota">Inclui avisos visualizados e não visualizados. O período considera a data em que o aviso foi gerado.</p>
+        <p class="erro" id="avisoHistErro" role="alert"></p>
+        <div class="aviso-lista" id="avisoHistLista"></div>
+      </div>
     </section>
 
 
@@ -766,6 +808,8 @@ async function avisosContador(){
 function avisosResumo(){
  const nao=AVISOS.filter(a=>!a.visualizado).length,total=AVISOS.length,maior=AVISOS.length?Math.max(...AVISOS.map(a=>Number(a.diferenca)||0)):null;
  $("avisoNaoLidos").textContent=nao;$("avisoMaior").textContent=maior==null?"—":"R$ "+f(maior);
+ $("avisoMaior").disabled=maior==null;
+ $("avisoMaiorDica").hidden=maior==null;
  $("avisoMarcarTodos").disabled=nao===0;
 }
 function avisosRender(){
@@ -778,7 +822,7 @@ function avisosRender(){
  $("avisoTotalLabel").textContent=labels[st]||"Total de avisos";
  $("avisoTotal").textContent=L.length;
  if(!L.length){$("avisoLista").innerHTML=`<div class="aviso-vazio"><b>Nenhum aviso encontrado</b><span>${st==="nao"?"Não há aumentos pendentes de visualização com estes filtros.":"Não há avisos para os filtros selecionados."}</span></div>`;return}
- $("avisoLista").innerHTML=L.map(a=>`<article class="aviso-card ${a.visualizado?"":"novo"}">
+ $("avisoLista").innerHTML=L.map(a=>`<article class="aviso-card ${a.visualizado?"":"novo"}" data-aviso-id="${esc(a.id)}">
    <div class="aviso-posto"><b>${esc(a.posto)}</b><span>${esc(a.cidade||"")}${a.uf?" · "+esc(a.uf):""}</span><span class="aviso-produto">${esc(a.produto_nome||NM[a.produto]||a.produto)}</span></div>
    <div class="aviso-precos"><div class="aviso-valor"><small>Preço anterior</small><strong>R$ ${f(a.preco_anterior)}</strong></div><span class="aviso-seta">→</span><div class="aviso-valor"><small>Preço atual</small><strong>R$ ${f(a.preco_atual)}</strong></div><div class="aviso-aumento"><strong>▲ R$ ${f(a.diferenca)}</strong>+${f(a.percentual)}%</div></div>
    <div class="aviso-meta">${a.visualizado?'<span class="aviso-lido">Visualizado</span>':'<span class="aviso-novo">NOVO</span>'}<time>Aviso gerado em ${avisoData(a.criado_em)}</time>${a.visualizado?'':`<button class="btn sm" data-aviso-lido="${a.id}">Marcar como visualizado</button>`}</div>
@@ -802,6 +846,69 @@ async function avisosCarregar(){
  if(erroConsulta){E.textContent="Erro ao carregar avisos: "+erroConsulta.message;AVISOS=[];avisosResumo();avisosRender();return}
  AVISOS=registros.sort((a,b)=>Number(a.visualizado)-Number(b.visualizado)||new Date(b.criado_em)-new Date(a.criado_em));E.textContent="";avisosResumo();avisosRender();await avisosContador();
 }
+$("avisoMaior").onclick=()=>{
+ // Usa o mesmo conjunto de dados do indicador para localizar exatamente o aviso.
+ if(!AVISOS.length)return;
+ const maior=AVISOS.reduce((melhor,a)=>Number(a.diferenca)>Number(melhor.diferenca)?a:melhor,AVISOS[0]);
+ avisoAbaSelecionar(false);
+ $("avisoStatus").value="todos";
+ $("avisoProduto").value="";
+ $("avisoBusca").value="";
+ avisosRender();
+ const card=Array.from($("avisoLista").querySelectorAll("[data-aviso-id]")).find(el=>el.dataset.avisoId===String(maior.id));
+ if(card){
+   card.classList.add("aviso-destaque");
+   card.scrollIntoView({behavior:"smooth",block:"center"});
+   card.setAttribute("tabindex","-1");
+   card.focus({preventScroll:true});
+ }else $("avisoErr").textContent="Não foi possível localizar o aviso na lista.";
+};
+
+/* Histórico de aumentos: consulta por data de criação, inclusive visualizados. */
+function avisoAbaSelecionar(historico){
+ $("avisoPainelAtuais").hidden=historico;
+ $("avisoPainelHistorico").hidden=!historico;
+ $("avisoAbaAtuais").classList.toggle("ativa",!historico);
+ $("avisoAbaHistorico").classList.toggle("ativa",historico);
+ $("avisoAbaAtuais").setAttribute("aria-selected",String(!historico));
+ $("avisoAbaHistorico").setAttribute("aria-selected",String(historico));
+}
+$("avisoAbaAtuais").onclick=()=>avisoAbaSelecionar(false);
+$("avisoAbaHistorico").onclick=()=>{avisoAbaSelecionar(true);if(!$("avisoHistLista").dataset.consultado)avisosHistoricoConsultar()};
+function avisoDataISO(d){const partes=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d).reduce((o,x)=>(o[x.type]=x.value,o),{});return `${partes.year}-${partes.month}-${partes.day}`}
+(function(){const agora=new Date(),inicio=new Date(agora.getTime());inicio.setDate(inicio.getDate()-29);$("avisoHistInicio").value=avisoDataISO(inicio);$("avisoHistFim").value=avisoDataISO(agora)})();
+async function avisosHistoricoConsultar(){
+ const E=$("avisoHistErro"),lista=$("avisoHistLista"),ini=$("avisoHistInicio").value,fim=$("avisoHistFim").value;
+ if(!ini||!fim||ini>fim){E.textContent="Informe um período válido (data inicial anterior ou igual à final).";return}
+ E.textContent="Consultando histórico…";lista.innerHTML="";lista.dataset.consultado="";
+ const inicioUTC=new Date(ini+"T00:00:00-03:00").toISOString();
+ const fimUTC=new Date(new Date(fim+"T00:00:00-03:00").getTime()+86400000).toISOString();
+ const registros=[],lote=500;
+ for(let i=0;;i+=lote){
+   const {data,error}=await sb.from("avisos_precos_painel").select("*")
+    .gte("criado_em",inicioUTC).lt("criado_em",fimUTC)
+    .order("criado_em",{ascending:false}).order("id",{ascending:false}).range(i,i+lote-1);
+   if(error){E.textContent="Erro ao consultar histórico: "+error.message;return}
+   registros.push(...(data||[]));if(!data||data.length<lote)break;
+ }
+ const pr=$("avisoHistProduto").value,q=$("avisoHistBusca").value.trim().toLowerCase();
+ const L=registros.filter(a=>(!pr||a.produto===pr)&&(!q||`${a.posto||""} ${a.cidade||""} ${a.uf||""}`.toLowerCase().includes(q)));
+ $("avisoHistTotal").textContent=L.length;
+ $("avisoHistPostos").textContent=new Set(L.map(a=>a.posto||a.posto_id||"")).size;
+ const maior=L.length?Math.max(...L.map(a=>Number(a.diferenca)||0)):null;
+ $("avisoHistMaior").textContent=maior==null?"—":"R$ "+f(maior);
+ E.textContent="";lista.dataset.consultado="1";
+ if(!L.length){lista.innerHTML='<div class="aviso-vazio"><b>Nenhum aumento encontrado</b><span>Não há avisos registrados para o período e filtros selecionados.</span></div>';return}
+ lista.innerHTML=L.map(a=>`<article class="aviso-card ${a.visualizado?"":"novo"}">
+  <div class="aviso-posto"><b>${esc(a.posto)}</b><span>${esc(a.cidade||"")}${a.uf?" · "+esc(a.uf):""}</span><span class="aviso-produto">${esc(a.produto_nome||NM[a.produto]||a.produto)}</span></div>
+  <div class="aviso-precos"><div class="aviso-valor"><small>Preço anterior</small><strong>R$ ${f(a.preco_anterior)}</strong></div><span class="aviso-seta">→</span><div class="aviso-valor"><small>Preço novo</small><strong>R$ ${f(a.preco_atual)}</strong></div><div class="aviso-aumento"><strong>▲ R$ ${f(a.diferenca)}</strong>+${f(a.percentual)}%</div></div>
+  <div class="aviso-meta">${a.visualizado?'<span class="aviso-lido">Visualizado</span>':'<span class="aviso-novo">Não visualizado</span>'}<time>Aviso gerado em ${avisoData(a.criado_em)}</time></div>
+ </article>`).join("");
+}
+$("avisoHistConsultar").onclick=avisosHistoricoConsultar;
+$("avisoHistProduto").onchange=()=>{$("avisoHistLista").dataset.consultado=""};
+$("avisoHistBusca").onkeydown=e=>{if(e.key==="Enter")avisosHistoricoConsultar()};
+
 $("avisoBusca").oninput=avisosRender;$("avisoStatus").onchange=avisosRender;$("avisoProduto").onchange=avisosRender;
 $("avisoMarcarTodos").onclick=async()=>{if(!AVISOS.some(a=>!a.visualizado))return;if(!confirm("Marcar todos os avisos de aumento como visualizados?"))return;const b=$("avisoMarcarTodos"),txt=b.textContent;b.disabled=true;b.textContent="Marcando…";const {data,error}=await sb.rpc("marcar_todos_avisos_visualizados");b.textContent=txt;if(error){$("avisoErr").textContent="Não foi possível marcar os avisos: "+error.message;b.disabled=false;return}$("avisoErr").textContent=(data||0)+" aviso(s) marcado(s) como visualizado(s).";await avisosCarregar()};
 setInterval(()=>{if(!$('app').hidden)avisosContador()},60000);
