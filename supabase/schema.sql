@@ -4,6 +4,8 @@
 -- Fotografia tirada em 2026-11-04, direto do banco em produção.
 --
 -- Arquivo de REFERÊNCIA: mostra como o banco está hoje.
+-- Mudanças feitas depois desta fotografia estão em supabase/migrations/
+-- (ex.: aprovação de preços pelo gerente).
 -- Não rode este arquivo no banco. Mudanças novas entram como migrações
 -- em supabase/migrations/ (veja supabase/LEIA-ME.md).
 -- Os comentários e linhas em branco das funções foram compactados;

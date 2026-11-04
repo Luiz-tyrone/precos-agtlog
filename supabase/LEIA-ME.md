@@ -17,6 +17,23 @@ Projeto: `wuzmcqvlcqisvhwapjgu` (organização **agt**)
 | `posto.html` | sem login, pelo link com token | RPCs `carregar_tela` e `enviar_precos` |
 | `index.html` | com login (equipe AGT) | tabelas `postos`, `precos`, `responsaveis`, `cfa_exportacoes`; views `ultimo_preco`, `avisos_precos_painel`, `cfa_precos_pendentes`; RPCs `meu_perfil`, `liberar_edicao_*`, `marcar_*_visualizado(s)`, `gerar_exportacao_cfa` |
 
+## Aprovação de preços (perfil Gerente)
+
+Migração `20261105120000_aprovacao_precos_gerente`.
+
+- Todo preço enviado pelo posto entra como **aguardando**.
+- Só o perfil **gerente** aprova ou recusa (tela "Aprovações" do painel).
+  Admin e Logística só acompanham. O banco bloqueia qualquer outro caminho.
+- Só preço **aprovado** vale: último preço, histórico, exportação CFA e aviso de aumento
+  (o aviso é gerado na aprovação, comparando com o último preço aprovado).
+- Recusado: o posto fica bloqueado até a equipe liberar um novo envio.
+- O posto vê na tela dele se o envio está aguardando, aprovado ou recusado (com o motivo).
+- Situações em `precos.status`: `aguardando`, `aprovado`, `recusado`, `substituido`
+  (posto enviou de novo, após liberação, antes da decisão).
+
+Para dar o perfil a alguém: criar o usuário em Authentication → Users e inserir em
+`usuarios_permissoes` com `perfil = 'gerente'`.
+
 ## Pontos de atenção (verificado em 2026-11-04)
 
 1. ~~RLS desligado em 4 tabelas~~ **Corrigido em 2026-11-04** (migração
