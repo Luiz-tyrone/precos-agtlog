@@ -27,3 +27,23 @@ Projeto: `wuzmcqvlcqisvhwapjgu` (organização **agt**)
    se o cadastro público de usuários estiver desligado no Supabase
    (Authentication → Sign In / Providers → "Allow new users to sign up").
 4. A proteção contra senhas vazadas está desligada (Authentication → Passwords).
+
+## Histórico de operações nos dados
+
+### 2026-11-04: limpeza dos dados fictícios (início da operação real)
+
+Apagados todos os dados de teste:
+
+| Tabela | Registros apagados |
+|--------|-------------------|
+| `precos` (28/07 a 04/11/2026) | 2.399 |
+| `avisos_precos` | 1.226 |
+| `cfa_exportacoes` | 5 |
+| `cfa_exportacao_itens` | 101 |
+
+Postos (104), responsáveis (47), links e usuários não foram alterados.
+
+Cópia de segurança no esquema `backup` (não acessível pelo site nem pela chave
+pública): `backup.precos_20261104`, `backup.avisos_precos_20261104`,
+`backup.cfa_exportacoes_20261104`, `backup.cfa_exportacao_itens_20261104`.
+Quando não forem mais necessárias: `drop schema backup cascade;`
