@@ -20,6 +20,9 @@ alter table public.precos
   add column decidido_em timestamptz,
   add column motivo_recusa text;
 
+-- preços enviados antes desta regra já valiam: ficam aprovados
+update public.precos set status = 'aprovado';
+
 create index precos_envio_id_idx on public.precos (envio_id);
 create index precos_aguardando_idx on public.precos (posto_id) where status = 'aguardando';
 
