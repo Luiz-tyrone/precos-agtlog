@@ -105,13 +105,18 @@ create table public.usuarios_permissoes (
 -- ---------------------------------------------------------------------
 -- RLS (segurança por linha) e políticas
 -- ---------------------------------------------------------------------
--- RLS LIGADO:    responsaveis, postos, precos
--- RLS DESLIGADO: avisos_precos, cfa_exportacoes, cfa_exportacao_itens,
---                usuarios_permissoes   (<- ver alerta em LEIA-ME.md)
+-- RLS ligado em todas as tabelas (as 4 últimas desde a migração
+-- 20261104172722_ativar_rls_tabelas_expostas).
+-- anon (sem login) não acessa nenhuma tabela; a tela do posto usa só
+-- as funções carregar_tela e enviar_precos.
 
-alter table public.responsaveis enable row level security;
-alter table public.postos       enable row level security;
-alter table public.precos       enable row level security;
+alter table public.responsaveis         enable row level security;
+alter table public.postos               enable row level security;
+alter table public.precos               enable row level security;
+alter table public.avisos_precos        enable row level security;
+alter table public.cfa_exportacoes      enable row level security;
+alter table public.cfa_exportacao_itens enable row level security;
+alter table public.usuarios_permissoes  enable row level security;
 
 create policy "equipe acessa tudo" on public.responsaveis
   as permissive for all to authenticated using (true) with check (true);
@@ -119,6 +124,14 @@ create policy "equipe acessa tudo" on public.postos
   as permissive for all to authenticated using (true) with check (true);
 create policy "equipe acessa tudo" on public.precos
   as permissive for all to authenticated using (true) with check (true);
+create policy "equipe acessa tudo" on public.avisos_precos
+  as permissive for all to authenticated using (true) with check (true);
+create policy "equipe acessa tudo" on public.cfa_exportacoes
+  as permissive for all to authenticated using (true) with check (true);
+create policy "equipe acessa tudo" on public.cfa_exportacao_itens
+  as permissive for all to authenticated using (true) with check (true);
+create policy "usuario le o proprio perfil" on public.usuarios_permissoes
+  as permissive for select to authenticated using (user_id = (select auth.uid()));
 
 -- ---------------------------------------------------------------------
 -- VIEWS

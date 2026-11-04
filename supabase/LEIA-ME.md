@@ -19,10 +19,9 @@ Projeto: `wuzmcqvlcqisvhwapjgu` (organização **agt**)
 
 ## Pontos de atenção (verificado em 2026-11-04)
 
-1. **RLS desligado em 4 tabelas:** `usuarios_permissoes`, `avisos_precos`,
-   `cfa_exportacoes` e `cfa_exportacao_itens`. As duas primeiras aceitam leitura e
-   escrita com a chave pública (anon), a mesma que está no `config.js`. Ou seja,
-   qualquer pessoa pode ler, alterar ou apagar os perfis de acesso e os avisos.
+1. ~~RLS desligado em 4 tabelas~~ **Corrigido em 2026-11-04** (migração
+   `20261104172722_ativar_rls_tabelas_expostas`). Testado antes e depois: tela do
+   posto, painel, avisos, exportação CFA e gatilho de aumento funcionando.
 2. A view `cfa_precos_pendentes` roda com permissão do dono (sem `security_invoker`).
 3. As RPCs do painel podem ser chamadas por qualquer usuário logado. Isso só é seguro
    se o cadastro público de usuários estiver desligado no Supabase
