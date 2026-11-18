@@ -1,15 +1,18 @@
 # Plano: Assistente de IA (texto e voz) no painel
 
-> **Situação em 17/11/2026 (para retomar numa sessão nova):**
+> **Situação em 18/11/2026: PAUSADO a pedido do usuário** (foco em colocar o sistema para rodar).
 > - Plano aprovado. Modelo do teste: **Claude Haiku 5.5**.
-> - ✅ Código da função de teste pronto: `supabase/functions/assistente-teste/index.ts`. Ainda **não publicado**.
-> - ❌ A publicação travou porque o conector do Supabase não tinha permissão para Edge Functions.
->   - O usuário escolheu a **opção (a)**: reconectar o Supabase no claude.ai com a permissão de Edge Functions.
-> - Próximos passos:
->   1. Publicar `assistente-teste` com `verify_jwt=false`, porque a função tem autenticação própria pelo cabeçalho `x-teste`.
->   2. Pedir os segredos `ANTHROPIC_API_KEY` e `IA_TESTE_SENHA` pelo formulário do Supabase (`create_edge_function_secret`).
+> - ✅ Conector do Supabase reconectado na organização certa (projeto `wuzmcqvlcqisvhwapjgu`), com Edge Functions.
+> - ✅ `assistente-teste` **publicada** (versão 1, `verify_jwt=false`). Sem os segredos, recusa toda chamada com 401.
+> - ❌ O formulário de segredos do conector (`create_edge_function_secret`) estava desligado pelo Supabase
+>   ("Storing keys is paused"). Os segredos vão direto no painel:
+>   Supabase → Edge Functions → Secrets (supabase.com/dashboard/project/wuzmcqvlcqisvhwapjgu/functions/secrets).
+> - Para retomar:
+>   1. Gerar uma senha nova (`openssl rand -hex 24`), passar para o usuário salvar como `IA_TESTE_SENHA`.
+>      A senha de 18/11 não foi guardada, então ignore-a.
+>   2. Usuário cria a chave em console.anthropic.com (com crédito) e salva como `ANTHROPIC_API_KEY`. Nunca no chat.
 >   3. Rodar de 10 a 15 perguntas reais e montar o relatório: resposta, valor certo, acerto e custo.
-> - Pendência do usuário: criar a conta em console.anthropic.com, colocar crédito e gerar a API key. A chave nunca vai no chat.
+>   4. Depois do teste, apagar `assistente-teste`. O conector não tem como apagar, então o usuário apaga pelo painel.
 
 ## Contexto
 O diretor e a equipe querem perguntar coisas do banco em linguagem natural, por texto ou voz. Exemplos:
