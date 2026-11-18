@@ -15,7 +15,23 @@ Projeto: `wuzmcqvlcqisvhwapjgu` (organização **agt**)
 | Tela | Acesso | O que usa |
 |------|--------|-----------|
 | `posto.html` | sem login, pelo link com token | RPCs `carregar_tela` e `enviar_precos` |
-| `index.html` | com login (equipe AGT) | tabelas `postos`, `precos`, `responsaveis`, `cfa_exportacoes`; views `ultimo_preco`, `avisos_precos_painel`, `cfa_precos_pendentes`; RPCs `meu_perfil`, `liberar_edicao_*`, `marcar_*_visualizado(s)`, `gerar_exportacao_cfa` |
+| `index.html` | com login (equipe AGT) | tabelas `postos`, `precos`, `responsaveis`, `cfa_exportacoes`; views `ultimo_preco`, `avisos_precos_painel`, `cfa_precos_pendentes`; RPCs `meu_perfil`, `liberar_edicao_*`, `marcar_*_visualizado(s)`, `gerar_exportacao_cfa`; Realtime na tabela `precos` |
+
+## Atualização em tempo real do painel
+
+Migração `20261118122229_realtime_precos`: liga o Supabase Realtime na tabela `precos`.
+
+- Com o painel aberto, quando um posto envia preços, a tela se atualiza sozinha em
+  ~2 segundos e mostra o aviso "Novo envio de preços" com o nome dos postos.
+- Aprovar ou recusar um envio também atualiza o painel aberto de quem estiver olhando,
+  mas sem o aviso.
+- Se houver um formulário aberto, a atualização espera ele ser fechado.
+- Se a conexão cair (celular em segundo plano, rede), o painel recarrega ao reconectar.
+- O Realtime respeita o RLS: só usuário logado recebe os eventos. O link dos postos
+  (`anon`) não recebe nada.
+- Para conferir: com o painel aberto, a consulta
+  `select count(*) from realtime.subscription where entity = 'public.precos'::regclass`
+  deve devolver 1 ou mais.
 
 ## Aprovação de preços (perfil Gerente)
 
@@ -64,3 +80,17 @@ Cópia de segurança no esquema `backup` (não acessível pelo site nem pela cha
 pública): `backup.precos_20261104`, `backup.avisos_precos_20261104`,
 `backup.cfa_exportacoes_20261104`, `backup.cfa_exportacao_itens_20261104`.
 Quando não forem mais necessárias: `drop schema backup cascade;`
+
+### 2026-11-18: limpeza dos testes antes de começar com dados reais
+
+Apagados com `truncate ... restart identity` numa transação só:
+
+| Tabela | Registros apagados |
+|--------|-------------------|
+| `precos` (18/11/2026, 09:03 a 09:27, 4 postos de teste, todos aprovados) | 12 |
+| `avisos_precos` | 0 |
+| `cfa_exportacoes` | 0 |
+| `cfa_exportacao_itens` | 0 |
+
+Postos (104), responsáveis (47), links e usuários (3) não foram alterados.
+Desta vez não foi feita cópia no esquema `backup`. Eram só esses 12 testes.

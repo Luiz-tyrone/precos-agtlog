@@ -64,7 +64,7 @@ input,select,textarea{border:1px solid var(--border-strong);background:var(--sur
 .chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 15px}.chip{border:1px solid var(--border);background:var(--surface);color:#615867;border-radius:999px;padding:6px 11px;font-weight:700;font-size:12px;cursor:pointer;transition:.15s}.chip:hover{border-color:#cfc4d4;background:#faf8fb}.chip[aria-pressed=true]{background:var(--purple);border-color:var(--purple);color:#fff}.chip small{opacity:.75;margin-left:4px}.chip i{font-style:normal;background:var(--yellow);color:var(--purple);border-radius:99px;padding:1px 5px;margin-left:5px;font-size:10px}
 
 /* Tabelas */
-.scroll{overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm)}table{width:100%;border-collapse:separate;border-spacing:0;background:transparent;min-width:980px}th{background:#faf9fb;color:#756d7a;text-align:left;padding:11px 12px;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border)}td{padding:10px 12px;border-top:1px solid #f0edf2;vertical-align:middle}tbody tr:not(.g):not(.rg):hover td{background:#fcfbfd}.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:650}.old{color:#9a929d;font-style:normal}.hist-up{color:var(--red)!important;font-weight:800}.hist-down{color:var(--green)!important;font-weight:800}.hist-equal{color:var(--text)!important;font-weight:700}.min{display:inline-flex;background:var(--green-bg);color:var(--green);font-weight:800;border-radius:8px;padding:3px 7px}.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:750;border-radius:999px;padding:4px 8px;white-space:nowrap}.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.pill.pend{background:var(--amber-bg);color:var(--amber)}.pill.ok{background:var(--green-bg);color:var(--green)}.av{color:var(--red);font-size:12px}tr.g td{background:#f8f6fa;padding:0;border-top:1px solid var(--border)}tr.g button{width:100%;text-align:left;border:0;background:transparent;color:var(--purple);padding:11px 13px;font-weight:800;cursor:pointer}tr.g button span{color:var(--muted);font-weight:550;margin-left:8px;font-size:12px}.rg td{background:#f7f4f9!important;padding:11px 12px;border-top:1px solid var(--border)}.rg .rw{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.rg .rw b{flex:1;min-width:220px;color:var(--purple)}
+.scroll{overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm)}table{width:100%;border-collapse:separate;border-spacing:0;background:transparent;min-width:980px}th{background:#faf9fb;color:#756d7a;text-align:left;padding:11px 12px;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border)}td{padding:10px 12px;border-top:1px solid #f0edf2;vertical-align:middle}tbody tr:not(.g):not(.rg):hover td{background:#fcfbfd}.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:650}.old{color:#9a929d;font-style:normal}.hist-up{color:var(--red)!important;font-weight:800}.hist-down{color:var(--green)!important;font-weight:800}.hist-equal{color:var(--text)!important;font-weight:700}.min{display:inline-flex;background:var(--green-bg);color:var(--green);font-weight:800;border-radius:8px;padding:3px 7px}.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:750;border-radius:999px;padding:4px 8px;white-space:nowrap}.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.pill.pend{background:var(--amber-bg);color:var(--amber)}.pill.ok{background:var(--green-bg);color:var(--green)}.pill.aprov{background:var(--red-bg);color:var(--red)}.av{color:var(--red);font-size:12px}tr.g td{background:#f8f6fa;padding:0;border-top:1px solid var(--border)}tr.g button{width:100%;text-align:left;border:0;background:transparent;color:var(--purple);padding:11px 13px;font-weight:800;cursor:pointer}tr.g button span{color:var(--muted);font-weight:550;margin-left:8px;font-size:12px}.rg td{background:#f7f4f9!important;padding:11px 12px;border-top:1px solid var(--border)}.rg .rw{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.rg .rw b{flex:1;min-width:220px;color:var(--purple)}
 
 /* Histórico / cadastro */
 .filtros{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:11px;margin-bottom:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-sm)}.filtros select,.filtros input{width:100%}.erro{color:var(--red);font-size:12px;min-height:1.2em;margin:7px 0}.nota{font-size:12px;color:var(--muted);margin:0 0 12px}.resumo{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:10px;margin:14px 0}.resumo span{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;color:var(--muted);box-shadow:var(--shadow-sm)}.resumo b{display:block;color:var(--text);font-size:18px;margin-top:3px}.rolar{max-height:330px;overflow:auto;margin-bottom:14px}.rolar table{min-width:430px}svg text{fill:var(--muted);font-size:11px}
@@ -332,6 +332,13 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
   .agt-vivo-ripple{display:none!important;animation:none!important}
 }
 
+/* Aviso de envio novo (tempo real) */
+.rt-aviso{position:fixed;right:20px;bottom:20px;z-index:60;max-width:min(360px,calc(100vw - 32px));background:var(--purple);color:#fff;border-radius:14px;padding:13px 16px;box-shadow:0 12px 34px rgba(39,27,45,.22);font-weight:800;opacity:0;transform:translateY(10px);transition:opacity .2s ease,transform .2s ease;pointer-events:none}
+.rt-aviso.on{opacity:1;transform:none}
+.rt-aviso small{display:block;font-weight:500;opacity:.88;margin-top:2px;font-size:13px}
+:root[data-theme="dark"] .rt-aviso{background:#4b315d;box-shadow:0 12px 34px rgba(0,0,0,.45)}
+@media(max-width:640px){.rt-aviso{left:16px;right:16px;bottom:16px;max-width:none}}
+@media(prefers-reduced-motion:reduce){.rt-aviso{transition:none}}
 
 /* Abas e consulta histórica dos avisos */
 .aviso-abas{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}
@@ -592,6 +599,7 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
   <p>Seu perfil não possui permissão para acessar esta área. O perfil Logística tem acesso somente ao Painel de preços e aos Avisos. Só o perfil Gerente aprova preços.</p>
   <button class="btn" id="authzOk">Entendi</button>
 </dialog>
+<div id="rtAviso" class="rt-aviso" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -649,6 +657,7 @@ async function iniciar(s){
    await carregarPerfil();
    $("usr").innerHTML=`${esc(s.user.email)} <span class="profile-tag">${NOME_PERFIL[PERFIL]||esc(PERFIL)}</span>`;
    await carregar();
+   rtLigar(s);
  }catch(e){
    console.error(e);
    $("app").hidden=true;$("login").hidden=false;
@@ -734,7 +743,7 @@ function estadoEdicao(d){
  if(d.ult||d.env)return `<span class="edit-state locked">Preço bloqueado</span>`;
  return `<span class="edit-state neutral">Primeiro envio disponível</span>`
 }
-function linha(d,mn){const w=wa(d,msg(d)),contato=PERFIL==="admin"?(w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Consultar no WhatsApp</a>`:`<span class="av">sem telefone</span>`):"";return `<tr><td>${esc(d.nome)}${d.observacao?` <span class="av" title="${esc(d.observacao)}">⚠</span>`:""}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td class="n">${cel(d,"s10",mn)}</td><td class="n">${cel(d,"s500")}</td><td class="n">${cel(d,"arla")}</td><td>${esc(d.prazo)||"—"}</td><td>${d.pend?`<span class="pill pend">Sem atualização no mês</span> ${contato}`:`<span class="pill ok">Atualizado no mês</span>`}${d.env?.status==="aguardando"?` <span class="pill pend" title="Preço novo aguardando aprovação do gerente">Em aprovação</span>`:""}</td><td>${ultTxt(d)}</td></tr>`}
+function linha(d,mn){const w=wa(d,msg(d)),contato=PERFIL==="admin"?(w?`<a class="btn sm" target="_blank" rel="noopener" href="${w}">Consultar no WhatsApp</a>`:`<span class="av">sem telefone</span>`):"";return `<tr><td>${esc(d.nome)}${d.observacao?` <span class="av" title="${esc(d.observacao)}">⚠</span>`:""}</td><td>${esc(d.cidade)}${d.uf?" - "+d.uf:""}</td><td class="n">${cel(d,"s10",mn)}</td><td class="n">${cel(d,"s500")}</td><td class="n">${cel(d,"arla")}</td><td>${esc(d.prazo)||"—"}</td><td>${d.pend?`<span class="pill pend">Sem atualização no mês</span> ${contato}`:`<span class="pill ok">Atualizado no mês</span>`}${d.env?.status==="aguardando"?` <span class="pill aprov" title="Preço novo aguardando aprovação do gerente">Em aprovação</span>`:""}</td><td>${ultTxt(d)}</td></tr>`}
 function tabela(){
  const q=$("q").value.trim().toLowerCase(),o=$("ord").value,p=$("pend").checked;
  const L=D.filter(d=>(!uf||(d.uf||"—")===uf)&&(!p||d.pend)&&(!q||(d.nome+" "+d.cidade+" "+d.uf+" "+(d.resp.nome||"")).toLowerCase().includes(q)));
@@ -1021,6 +1030,41 @@ $("avisoBusca").oninput=avisosRender;$("avisoStatus").onchange=avisosRender;$("a
 $("avisoMarcarTodos").onclick=async()=>{if(!AVISOS.some(a=>!a.visualizado))return;if(!confirm("Marcar todos os avisos de aumento como visualizados?"))return;const b=$("avisoMarcarTodos"),txt=b.textContent;b.disabled=true;b.textContent="Marcando…";const {data,error}=await sb.rpc("marcar_todos_avisos_visualizados");b.textContent=txt;if(error){$("avisoErr").textContent="Não foi possível marcar os avisos: "+error.message;b.disabled=false;return}$("avisoErr").textContent=(data||0)+" aviso(s) marcado(s) como visualizado(s).";await avisosCarregar()};
 setInterval(()=>{if(!$('app').hidden)avisosContador()},60000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!$('app').hidden)avisosContador()});
+
+/* TEMPO REAL: o painel se atualiza sozinho quando um posto envia preços
+   ou quando um envio é aprovado ou recusado (Supabase Realtime na tabela precos). */
+let RT=null,RT_TIMER=null,RT_AVISO=null,RT_CAIU=false;const RT_NOVOS=new Set();
+// Espera 2s para juntar os produtos do mesmo envio numa atualização só.
+function rtAgendar(){clearTimeout(RT_TIMER);RT_TIMER=setTimeout(rtAplicar,2000)}
+async function rtAplicar(){
+ if($("app").hidden)return;
+ // Não recarrega por baixo de um formulário aberto nem durante outra atualização.
+ if($("refreshTop").disabled||document.querySelector("dialog[open]")){rtAgendar();return}
+ const ids=[...RT_NOVOS];RT_NOVOS.clear();
+ await atualizarSistema();
+ if(ids.length)rtMostrar(ids);
+}
+function rtMostrar(ids){
+ const nomes=ids.map(id=>A.find(p=>p.id===id)).filter(Boolean).map(p=>p.nome+(p.cidade?" · "+p.cidade:""));
+ const resto=nomes.length>3?` e mais ${nomes.length-3}`:"";
+ const el=$("rtAviso");
+ el.innerHTML=`Novo envio de preços${nomes.length?`<small>${esc(nomes.slice(0,3).join(", ")+resto)}</small>`:""}`;
+ el.classList.add("on");clearTimeout(RT_AVISO);RT_AVISO=setTimeout(()=>el.classList.remove("on"),7000);
+}
+function rtLigar(s){
+ if(RT)return;
+ sb.realtime.setAuth(s.access_token); // entra no canal já como usuário logado, senão o RLS bloqueia os eventos
+ RT=sb.channel("painel-precos")
+  .on("postgres_changes",{event:"*",schema:"public",table:"precos"},p=>{
+    if(p.eventType==="INSERT"&&p.new?.posto_id)RT_NOVOS.add(p.new.posto_id);
+    rtAgendar();
+  })
+  .subscribe(st=>{
+    // Se a conexão caiu (celular em segundo plano, rede), recarrega ao voltar para não perder envios.
+    if(st==="SUBSCRIBED"){if(RT_CAIU){RT_CAIU=false;rtAgendar()}}
+    else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED")RT_CAIU=true;
+  });
+}
 
 
 /* INTEGRAÇÃO CFA */
