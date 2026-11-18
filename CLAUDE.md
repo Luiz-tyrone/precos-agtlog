@@ -28,6 +28,7 @@ Memória do projeto para as próximas sessões. Atualizado em 18/11/2026.
   - Também em 18/11: filtro por estado e cidade na tela Aprovações. É só na tela, sem mudança no banco.
     - Com filtro, "Aprovar tudo" vira "Aprovar os N filtrados" e chama `decidir_envios` só com os ids visíveis.
     - Sem filtro, continua chamando `aprovar_todos_envios`.
+    - Ao lado da cidade há uma pesquisa (`aprovBusca`) por posto, cidade, UF ou responsável, que ignora acentos. Ela também conta como filtro.
 
 ## Perfis de usuário (tabela `usuarios_permissoes`: user_id, perfil, ativo)
 | Perfil | Pode |

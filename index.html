@@ -433,6 +433,7 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
       <div class="aviso-toolbar" id="aprovBarra" hidden>
         <select id="aprovUF" aria-label="Filtrar por estado"><option value="">Todos os estados</option></select>
         <select id="aprovCidade" aria-label="Filtrar por cidade"><option value="">Todas as cidades</option></select>
+        <input type="search" id="aprovBusca" placeholder="Buscar posto, cidade ou responsável..." aria-label="Buscar nas aprovações">
         <button class="btn sm secondary" id="aprovLimpar" style="margin-left:0" hidden>Limpar filtro</button>
         <button class="btn" id="aprovTodos">Aprovar tudo (todos os responsáveis)</button>
       </div>
@@ -858,7 +859,10 @@ const aprovValores=v=>PR.filter(k=>v&&v[k]!=null).map(k=>`${NM[k]} R$ ${f(v[k])}
 // filtro por estado e cidade (só na tela; "Aprovar tudo" respeita o filtro)
 let APROV_HIST=[];
 const aprovUF=e=>(e.uf||"").toUpperCase(),aprovCid=e=>e.cidade||"";
-const aprovFiltrados=()=>{const uf=$("aprovUF").value,c=$("aprovCidade").value;return ENVIOS.filter(e=>(!uf||aprovUF(e)===uf)&&(!c||aprovCid(e)===c))};
+const semAcento=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const aprovBuscaTxt=()=>semAcento($("aprovBusca").value.trim());
+const aprovFiltroAtivo=()=>!!($("aprovUF").value||$("aprovCidade").value||aprovBuscaTxt());
+const aprovFiltrados=()=>{const uf=$("aprovUF").value,c=$("aprovCidade").value,q=aprovBuscaTxt();return ENVIOS.filter(e=>(!uf||aprovUF(e)===uf)&&(!c||aprovCid(e)===c)&&(!q||semAcento(`${e.posto} ${e.cidade} ${e.uf} ${e.responsavel}`).includes(q)))};
 function aprovOpcoes(sel,valores,todos){
  const atual=sel.value,cont=new Map();valores.filter(Boolean).forEach(v=>cont.set(v,(cont.get(v)||0)+1));
  sel.innerHTML=`<option value="">${todos}</option>`+[...cont].sort((a,b)=>a[0].localeCompare(b[0],"pt-BR")).map(([v,n])=>`<option value="${esc(v)}">${esc(v)} (${n})</option>`).join("");
@@ -871,19 +875,20 @@ function aprovFiltroOpcoes(){
 }
 $("aprovUF").onchange=()=>{$("aprovCidade").value="";aprovFiltroOpcoes();aprovRender(APROV_HIST)};
 $("aprovCidade").onchange=()=>aprovRender(APROV_HIST);
-$("aprovLimpar").onclick=()=>{$("aprovUF").value="";$("aprovCidade").value="";aprovFiltroOpcoes();aprovRender(APROV_HIST)};
+$("aprovBusca").oninput=()=>aprovRender(APROV_HIST);
+$("aprovLimpar").onclick=()=>{$("aprovUF").value="";$("aprovCidade").value="";$("aprovBusca").value="";aprovFiltroOpcoes();aprovRender(APROV_HIST)};
 function aprovRender(H){
  const g=ehGerente();APROV_HIST=H;
  aprovFiltroOpcoes();
- const uf=$("aprovUF").value,cid=$("aprovCidade").value,filtro=!!(uf||cid),L=aprovFiltrados();
+ const uf=$("aprovUF").value,cid=$("aprovCidade").value,busca=$("aprovBusca").value.trim(),filtro=aprovFiltroAtivo(),L=aprovFiltrados();
  $("aprovN").textContent=filtro?`${L.length} de ${ENVIOS.length}`:ENVIOS.length;
  $("aprovAviso").hidden=g;
  $("aprovBarra").hidden=!ENVIOS.length;
  $("aprovLimpar").hidden=!filtro;
  $("aprovTodos").hidden=!g||L.length<2;
- $("aprovTodos").textContent=filtro?`Aprovar os ${L.length} filtrados (${[cid,uf].filter(Boolean).join(" · ")})`:"Aprovar tudo (todos os responsáveis)";
+ $("aprovTodos").textContent=filtro?`Aprovar os ${L.length} filtrados (${[busca&&`"${busca}"`,cid,uf].filter(Boolean).join(" · ")})`:"Aprovar tudo (todos os responsáveis)";
  if(!ENVIOS.length)$("aprovLista").innerHTML=`<div class="aviso-vazio"><b>Nenhum preço aguardando aprovação</b><span>Quando um posto enviar preços, eles aparecem aqui.</span></div>`;
- else if(!L.length)$("aprovLista").innerHTML=`<div class="aviso-vazio"><b>Nenhum posto aguardando neste filtro</b><span>Troque o estado ou a cidade, ou clique em "Limpar filtro".</span></div>`;
+ else if(!L.length)$("aprovLista").innerHTML=`<div class="aviso-vazio"><b>Nenhum posto aguardando neste filtro</b><span>Troque o estado, a cidade ou a pesquisa, ou clique em "Limpar filtro".</span></div>`;
  else{
    // agrupa por responsável: um bloco com todos os postos dele
    const grupos=new Map();
@@ -934,7 +939,7 @@ async function aprovDecidir(b,id,aprovar){
  await carregar();await aprovCarregar();
 }
 $("aprovTodos").onclick=async()=>{
- const filtro=!!($("aprovUF").value||$("aprovCidade").value),L=aprovFiltrados();
+ const filtro=aprovFiltroAtivo(),L=aprovFiltrados();
  if(!L.length)return;
  if(filtro){if(!confirm(`Aprovar os ${L.length} postos filtrados?\n\n${L.map(e=>`• ${e.posto}${e.cidade?" · "+e.cidade:""}${e.uf?" - "+e.uf:""}: ${aprovValores(e.valores)}`).join("\n")}`))return}
  else if(!confirm(`Aprovar todos os ${ENVIOS.length} envios aguardando?`))return;
