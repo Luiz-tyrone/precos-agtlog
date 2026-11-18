@@ -25,6 +25,9 @@ Memória do projeto para as próximas sessões. Atualizado em 18/11/2026.
   - trabalhar na branch `claude/supabase-integration-h4bc62`;
   - ir para a `main` por PR. O usuário pede "mande" ou "envie" quando quer que publique, o que significa PR e merge.
   - O PR #5 (tempo real e selo vermelho) entrou na `main` em 18/11.
+  - Também em 18/11: filtro por estado e cidade na tela Aprovações. É só na tela, sem mudança no banco.
+    - Com filtro, "Aprovar tudo" vira "Aprovar os N filtrados" e chama `decidir_envios` só com os ids visíveis.
+    - Sem filtro, continua chamando `aprovar_todos_envios`.
 
 ## Perfis de usuário (tabela `usuarios_permissoes`: user_id, perfil, ativo)
 | Perfil | Pode |
