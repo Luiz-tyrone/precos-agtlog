@@ -80,3 +80,17 @@ Cópia de segurança no esquema `backup` (não acessível pelo site nem pela cha
 pública): `backup.precos_20261104`, `backup.avisos_precos_20261104`,
 `backup.cfa_exportacoes_20261104`, `backup.cfa_exportacao_itens_20261104`.
 Quando não forem mais necessárias: `drop schema backup cascade;`
+
+### 2026-11-18: limpeza dos testes antes de começar com dados reais
+
+Apagados com `truncate ... restart identity` numa transação só:
+
+| Tabela | Registros apagados |
+|--------|-------------------|
+| `precos` (18/11/2026, 09:03 a 09:27, 4 postos de teste, todos aprovados) | 12 |
+| `avisos_precos` | 0 |
+| `cfa_exportacoes` | 0 |
+| `cfa_exportacao_itens` | 0 |
+
+Postos (104), responsáveis (47), links e usuários (3) não foram alterados.
+Desta vez não foi feita cópia no esquema `backup`. Eram só esses 12 testes.
