@@ -332,6 +332,13 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
   .agt-vivo-ripple{display:none!important;animation:none!important}
 }
 
+/* Aviso de envio novo (tempo real) */
+.rt-aviso{position:fixed;right:20px;bottom:20px;z-index:60;max-width:min(360px,calc(100vw - 32px));background:var(--purple);color:#fff;border-radius:14px;padding:13px 16px;box-shadow:0 12px 34px rgba(39,27,45,.22);font-weight:800;opacity:0;transform:translateY(10px);transition:opacity .2s ease,transform .2s ease;pointer-events:none}
+.rt-aviso.on{opacity:1;transform:none}
+.rt-aviso small{display:block;font-weight:500;opacity:.88;margin-top:2px;font-size:13px}
+:root[data-theme="dark"] .rt-aviso{background:#4b315d;box-shadow:0 12px 34px rgba(0,0,0,.45)}
+@media(max-width:640px){.rt-aviso{left:16px;right:16px;bottom:16px;max-width:none}}
+@media(prefers-reduced-motion:reduce){.rt-aviso{transition:none}}
 
 /* Abas e consulta histórica dos avisos */
 .aviso-abas{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}
@@ -592,6 +599,7 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
   <p>Seu perfil não possui permissão para acessar esta área. O perfil Logística tem acesso somente ao Painel de preços e aos Avisos. Só o perfil Gerente aprova preços.</p>
   <button class="btn" id="authzOk">Entendi</button>
 </dialog>
+<div id="rtAviso" class="rt-aviso" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -649,6 +657,7 @@ async function iniciar(s){
    await carregarPerfil();
    $("usr").innerHTML=`${esc(s.user.email)} <span class="profile-tag">${NOME_PERFIL[PERFIL]||esc(PERFIL)}</span>`;
    await carregar();
+   rtLigar(s);
  }catch(e){
    console.error(e);
    $("app").hidden=true;$("login").hidden=false;
@@ -1021,6 +1030,41 @@ $("avisoBusca").oninput=avisosRender;$("avisoStatus").onchange=avisosRender;$("a
 $("avisoMarcarTodos").onclick=async()=>{if(!AVISOS.some(a=>!a.visualizado))return;if(!confirm("Marcar todos os avisos de aumento como visualizados?"))return;const b=$("avisoMarcarTodos"),txt=b.textContent;b.disabled=true;b.textContent="Marcando…";const {data,error}=await sb.rpc("marcar_todos_avisos_visualizados");b.textContent=txt;if(error){$("avisoErr").textContent="Não foi possível marcar os avisos: "+error.message;b.disabled=false;return}$("avisoErr").textContent=(data||0)+" aviso(s) marcado(s) como visualizado(s).";await avisosCarregar()};
 setInterval(()=>{if(!$('app').hidden)avisosContador()},60000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!$('app').hidden)avisosContador()});
+
+/* TEMPO REAL: o painel se atualiza sozinho quando um posto envia preços
+   ou quando um envio é aprovado ou recusado (Supabase Realtime na tabela precos). */
+let RT=null,RT_TIMER=null,RT_AVISO=null,RT_CAIU=false;const RT_NOVOS=new Set();
+// Espera 2s para juntar os produtos do mesmo envio numa atualização só.
+function rtAgendar(){clearTimeout(RT_TIMER);RT_TIMER=setTimeout(rtAplicar,2000)}
+async function rtAplicar(){
+ if($("app").hidden)return;
+ // Não recarrega por baixo de um formulário aberto nem durante outra atualização.
+ if($("refreshTop").disabled||document.querySelector("dialog[open]")){rtAgendar();return}
+ const ids=[...RT_NOVOS];RT_NOVOS.clear();
+ await atualizarSistema();
+ if(ids.length)rtMostrar(ids);
+}
+function rtMostrar(ids){
+ const nomes=ids.map(id=>A.find(p=>p.id===id)).filter(Boolean).map(p=>p.nome+(p.cidade?" · "+p.cidade:""));
+ const resto=nomes.length>3?` e mais ${nomes.length-3}`:"";
+ const el=$("rtAviso");
+ el.innerHTML=`Novo envio de preços${nomes.length?`<small>${esc(nomes.slice(0,3).join(", ")+resto)}</small>`:""}`;
+ el.classList.add("on");clearTimeout(RT_AVISO);RT_AVISO=setTimeout(()=>el.classList.remove("on"),7000);
+}
+function rtLigar(s){
+ if(RT)return;
+ sb.realtime.setAuth(s.access_token); // entra no canal já como usuário logado, senão o RLS bloqueia os eventos
+ RT=sb.channel("painel-precos")
+  .on("postgres_changes",{event:"*",schema:"public",table:"precos"},p=>{
+    if(p.eventType==="INSERT"&&p.new?.posto_id)RT_NOVOS.add(p.new.posto_id);
+    rtAgendar();
+  })
+  .subscribe(st=>{
+    // Se a conexão caiu (celular em segundo plano, rede), recarrega ao voltar para não perder envios.
+    if(st==="SUBSCRIBED"){if(RT_CAIU){RT_CAIU=false;rtAgendar()}}
+    else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED")RT_CAIU=true;
+  });
+}
 
 
 /* INTEGRAÇÃO CFA */

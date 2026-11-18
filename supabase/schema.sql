@@ -485,3 +485,10 @@ $function$;
 create trigger trg_processar_aviso_aumento_preco
   after insert on public.precos
   for each row execute function public.processar_aviso_aumento_preco();
+
+-- ---------------------------------------------------------------------
+-- REALTIME
+-- ---------------------------------------------------------------------
+
+-- O painel recebe INSERT/UPDATE de precos na hora (respeitando o RLS).
+alter publication supabase_realtime add table public.precos;

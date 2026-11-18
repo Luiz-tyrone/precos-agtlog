@@ -15,7 +15,23 @@ Projeto: `wuzmcqvlcqisvhwapjgu` (organização **agt**)
 | Tela | Acesso | O que usa |
 |------|--------|-----------|
 | `posto.html` | sem login, pelo link com token | RPCs `carregar_tela` e `enviar_precos` |
-| `index.html` | com login (equipe AGT) | tabelas `postos`, `precos`, `responsaveis`, `cfa_exportacoes`; views `ultimo_preco`, `avisos_precos_painel`, `cfa_precos_pendentes`; RPCs `meu_perfil`, `liberar_edicao_*`, `marcar_*_visualizado(s)`, `gerar_exportacao_cfa` |
+| `index.html` | com login (equipe AGT) | tabelas `postos`, `precos`, `responsaveis`, `cfa_exportacoes`; views `ultimo_preco`, `avisos_precos_painel`, `cfa_precos_pendentes`; RPCs `meu_perfil`, `liberar_edicao_*`, `marcar_*_visualizado(s)`, `gerar_exportacao_cfa`; Realtime na tabela `precos` |
+
+## Atualização em tempo real do painel
+
+Migração `20261118122229_realtime_precos`: liga o Supabase Realtime na tabela `precos`.
+
+- Com o painel aberto, quando um posto envia preços, a tela se atualiza sozinha em
+  ~2 segundos e mostra o aviso "Novo envio de preços" com o nome dos postos.
+- Aprovar ou recusar um envio também atualiza o painel aberto de quem estiver olhando,
+  mas sem o aviso.
+- Se houver um formulário aberto, a atualização espera ele ser fechado.
+- Se a conexão cair (celular em segundo plano, rede), o painel recarrega ao reconectar.
+- O Realtime respeita o RLS: só usuário logado recebe os eventos. O link dos postos
+  (`anon`) não recebe nada.
+- Para conferir: com o painel aberto, a consulta
+  `select count(*) from realtime.subscription where entity = 'public.precos'::regclass`
+  deve devolver 1 ou mais.
 
 ## Aprovação de preços (perfil Gerente)
 
