@@ -430,7 +430,12 @@ aside button.restrito-perfil .nav-icon:after{content:"🔒";position:absolute;ri
         <div class="aviso-stat"><span>Aguardando aprovação</span><b id="aprovN">0</b></div>
       </div>
       <p class="nota" id="aprovAviso" hidden>Somente o perfil Gerente pode aprovar ou recusar preços. Aqui você acompanha os envios.</p>
-      <div class="aviso-toolbar" id="aprovBarra" hidden><button class="btn" id="aprovTodos">Aprovar tudo (todos os responsáveis)</button></div>
+      <div class="aviso-toolbar" id="aprovBarra" hidden>
+        <select id="aprovUF" aria-label="Filtrar por estado"><option value="">Todos os estados</option></select>
+        <select id="aprovCidade" aria-label="Filtrar por cidade"><option value="">Todas as cidades</option></select>
+        <button class="btn sm secondary" id="aprovLimpar" style="margin-left:0" hidden>Limpar filtro</button>
+        <button class="btn" id="aprovTodos">Aprovar tudo (todos os responsáveis)</button>
+      </div>
       <p class="erro" id="aprovErr" role="alert"></p>
       <div class="aviso-lista" id="aprovLista"></div>
       <h3 style="margin:26px 0 8px">Decisões recentes</h3>
@@ -850,16 +855,39 @@ async function aprovCarregar(){
  ENVIOS=p.data||[];E.textContent="";aprovRender(h.data||[]);aprovContador();
 }
 const aprovValores=v=>PR.filter(k=>v&&v[k]!=null).map(k=>`${NM[k]} R$ ${f(v[k])}`).join(" · ");
+// filtro por estado e cidade (só na tela; "Aprovar tudo" respeita o filtro)
+let APROV_HIST=[];
+const aprovUF=e=>(e.uf||"").toUpperCase(),aprovCid=e=>e.cidade||"";
+const aprovFiltrados=()=>{const uf=$("aprovUF").value,c=$("aprovCidade").value;return ENVIOS.filter(e=>(!uf||aprovUF(e)===uf)&&(!c||aprovCid(e)===c))};
+function aprovOpcoes(sel,valores,todos){
+ const atual=sel.value,cont=new Map();valores.filter(Boolean).forEach(v=>cont.set(v,(cont.get(v)||0)+1));
+ sel.innerHTML=`<option value="">${todos}</option>`+[...cont].sort((a,b)=>a[0].localeCompare(b[0],"pt-BR")).map(([v,n])=>`<option value="${esc(v)}">${esc(v)} (${n})</option>`).join("");
+ sel.value=cont.has(atual)?atual:"";
+}
+function aprovFiltroOpcoes(){
+ aprovOpcoes($("aprovUF"),ENVIOS.map(aprovUF),"Todos os estados");
+ const uf=$("aprovUF").value;
+ aprovOpcoes($("aprovCidade"),ENVIOS.filter(e=>!uf||aprovUF(e)===uf).map(aprovCid),"Todas as cidades");
+}
+$("aprovUF").onchange=()=>{$("aprovCidade").value="";aprovFiltroOpcoes();aprovRender(APROV_HIST)};
+$("aprovCidade").onchange=()=>aprovRender(APROV_HIST);
+$("aprovLimpar").onclick=()=>{$("aprovUF").value="";$("aprovCidade").value="";aprovFiltroOpcoes();aprovRender(APROV_HIST)};
 function aprovRender(H){
- const g=ehGerente();
- $("aprovN").textContent=ENVIOS.length;
+ const g=ehGerente();APROV_HIST=H;
+ aprovFiltroOpcoes();
+ const uf=$("aprovUF").value,cid=$("aprovCidade").value,filtro=!!(uf||cid),L=aprovFiltrados();
+ $("aprovN").textContent=filtro?`${L.length} de ${ENVIOS.length}`:ENVIOS.length;
  $("aprovAviso").hidden=g;
- $("aprovBarra").hidden=!g||ENVIOS.length<2;
+ $("aprovBarra").hidden=!ENVIOS.length;
+ $("aprovLimpar").hidden=!filtro;
+ $("aprovTodos").hidden=!g||L.length<2;
+ $("aprovTodos").textContent=filtro?`Aprovar os ${L.length} filtrados (${[cid,uf].filter(Boolean).join(" · ")})`:"Aprovar tudo (todos os responsáveis)";
  if(!ENVIOS.length)$("aprovLista").innerHTML=`<div class="aviso-vazio"><b>Nenhum preço aguardando aprovação</b><span>Quando um posto enviar preços, eles aparecem aqui.</span></div>`;
+ else if(!L.length)$("aprovLista").innerHTML=`<div class="aviso-vazio"><b>Nenhum posto aguardando neste filtro</b><span>Troque o estado ou a cidade, ou clique em "Limpar filtro".</span></div>`;
  else{
    // agrupa por responsável: um bloco com todos os postos dele
    const grupos=new Map();
-   ENVIOS.forEach(e=>{const p=A.find(x=>x.id===e.posto_id),rid=p?.responsavel_id||e.responsavel||"?";
+   L.forEach(e=>{const p=A.find(x=>x.id===e.posto_id),rid=p?.responsavel_id||e.responsavel||"?";
      if(!grupos.has(rid))grupos.set(rid,{rid,nome:e.responsavel||"Sem responsável",itens:[]});grupos.get(rid).itens.push(e)});
    const card=e=>{
      const p=A.find(x=>x.id===e.posto_id),v=e.valores||{};
@@ -906,9 +934,12 @@ async function aprovDecidir(b,id,aprovar){
  await carregar();await aprovCarregar();
 }
 $("aprovTodos").onclick=async()=>{
- if(!ENVIOS.length||!confirm(`Aprovar todos os ${ENVIOS.length} envios aguardando?`))return;
+ const filtro=!!($("aprovUF").value||$("aprovCidade").value),L=aprovFiltrados();
+ if(!L.length)return;
+ if(filtro){if(!confirm(`Aprovar os ${L.length} postos filtrados?\n\n${L.map(e=>`• ${e.posto}${e.cidade?" · "+e.cidade:""}${e.uf?" - "+e.uf:""}: ${aprovValores(e.valores)}`).join("\n")}`))return}
+ else if(!confirm(`Aprovar todos os ${ENVIOS.length} envios aguardando?`))return;
  const b=$("aprovTodos");b.disabled=true;
- const {error}=await sb.rpc("aprovar_todos_envios");b.disabled=false;
+ const {error}=filtro?await sb.rpc("decidir_envios",{p_envio_ids:L.map(e=>e.envio_id),p_aprovar:true,p_motivo:null}):await sb.rpc("aprovar_todos_envios");b.disabled=false;
  if(error){$("aprovErr").textContent="Não foi possível aprovar: "+error.message;return}
  await carregar();await aprovCarregar();
 };
