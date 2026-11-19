@@ -492,3 +492,16 @@ create trigger trg_processar_aviso_aumento_preco
 
 -- O painel recebe INSERT/UPDATE de precos na hora (respeitando o RLS).
 alter publication supabase_realtime add table public.precos;
+
+-- ---------------------------------------------------------------------
+-- APROVAÇÃO DE PREÇOS (depois da fotografia de 2026-11-04)
+-- ---------------------------------------------------------------------
+-- As funções de aprovação estão completas nas migrações:
+--   20261105120000_aprovacao_precos_gerente (status, decidir_envio,
+--     aprovar_todos_envios, gatilho proteger_status_preco)
+--   20261105150000_decidir_varios_envios (decidir_envios)
+--   20261119112832_recusar_libera_posto: versão atual de decidir_envio e
+--     decidir_envios. Ao RECUSAR, o posto fica liberado na hora
+--     (postos.liberado_manual = true) para enviar o preço corrigido.
+--     "Recusar todos" libera todos os postos recusados do responsável.
+--     Aprovar não libera nada.

@@ -42,7 +42,15 @@ Migração `20261105120000_aprovacao_precos_gerente`.
   Admin e Logística só acompanham. O banco bloqueia qualquer outro caminho.
 - Só preço **aprovado** vale: último preço, histórico, exportação CFA e aviso de aumento
   (o aviso é gerado na aprovação, comparando com o último preço aprovado).
-- Recusado: o posto fica bloqueado até a equipe liberar um novo envio.
+- Recusado: o posto fica **liberado na hora** para enviar o preço corrigido
+  (migração `20261119112832_recusar_libera_posto`, de 19/11/2026). Antes disso,
+  o posto ficava bloqueado até alguém liberar na tela Cadastro.
+  - Ao recusar um posto, esse posto é liberado.
+  - "Recusar todos" de um responsável libera todos os postos dele que foram recusados.
+  - Aprovar não libera nada.
+  - Depois do novo envio, o posto volta a ficar bloqueado, como sempre.
+  - Na tela do posto aparece o aviso vermelho com os valores recusados e o motivo,
+    acima dos campos para digitar os valores novos.
 - O posto vê na tela dele se o envio está aguardando, aprovado ou recusado (com o motivo).
 - Situações em `precos.status`: `aguardando`, `aprovado`, `recusado`, `substituido`
   (posto enviou de novo, após liberação, antes da decisão).

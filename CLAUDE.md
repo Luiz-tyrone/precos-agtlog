@@ -58,6 +58,9 @@ Memória do projeto para as próximas sessões. Atualizado em 18/11/2026.
   2. O gerente aprova ou recusa.
   3. Só o preço `aprovado` vale para o último preço, o histórico, a exportação CFA e os avisos de aumento.
   - Depois do primeiro envio, o posto só envia de novo se for liberado (`liberado_manual`).
+  - Desde 19/11, **recusar libera o posto na hora** (migração `20261119112832_recusar_libera_posto`).
+    - "Recusar todos" libera todos os postos recusados do responsável.
+    - Testado no banco com transação desfeita: 34 envios aguardando ficaram intactos.
 
 ## Painel em tempo real (desde 18/11)
 - O Realtime do Supabase está ligado na tabela `precos` (migração `20261118122229_realtime_precos`).

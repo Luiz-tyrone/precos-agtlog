@@ -922,7 +922,7 @@ async function aprovDecidirGrupo(b,rid,aprovar){
  const lista=gr.itens.map(e=>`• ${e.posto}${e.cidade?" · "+e.cidade:""}: ${aprovValores(e.valores)}`).join("\n");
  let motivo=null;
  if(aprovar){if(!confirm(`Aprovar os preços de todos os ${gr.itens.length} postos de ${gr.nome}?\n\n${lista}`))return}
- else{motivo=prompt(`Recusar os preços de todos os ${gr.itens.length} postos de ${gr.nome}?\n\nOs postos ficam bloqueados até a AGT-LOG liberar um novo envio.\nMotivo (aparece para o posto, opcional):`,"");if(motivo===null)return}
+ else{motivo=prompt(`Recusar os preços de todos os ${gr.itens.length} postos de ${gr.nome}?\n\nOs postos ficam liberados na hora para enviar o preço corrigido.\nMotivo (aparece para o posto, opcional):`,"");if(motivo===null)return}
  b.disabled=true;
  const {error}=await sb.rpc("decidir_envios",{p_envio_ids:gr.itens.map(e=>e.envio_id),p_aprovar:aprovar,p_motivo:motivo});
  if(error){$("aprovErr").textContent="Não foi possível salvar: "+error.message;b.disabled=false;return}
@@ -932,7 +932,7 @@ async function aprovDecidir(b,id,aprovar){
  const e=ENVIOS.find(x=>x.envio_id===id);if(!e)return;
  let motivo=null;
  if(aprovar){if(!confirm(`Aprovar os preços de ${e.posto}${e.cidade?" · "+e.cidade:""}?\n\n${aprovValores(e.valores)}`))return}
- else{motivo=prompt(`Recusar os preços de ${e.posto}${e.cidade?" · "+e.cidade:""}?\n\nO posto fica bloqueado até a AGT-LOG liberar um novo envio.\nMotivo (aparece para o posto, opcional):`,"");if(motivo===null)return}
+ else{motivo=prompt(`Recusar os preços de ${e.posto}${e.cidade?" · "+e.cidade:""}?\n\nO posto fica liberado na hora para enviar o preço corrigido.\nMotivo (aparece para o posto, opcional):`,"");if(motivo===null)return}
  b.disabled=true;
  const {error}=await sb.rpc("decidir_envio",{p_envio_id:id,p_aprovar:aprovar,p_motivo:motivo});
  if(error){$("aprovErr").textContent="Não foi possível salvar: "+error.message;b.disabled=false;return}
